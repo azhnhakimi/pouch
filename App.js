@@ -8,6 +8,9 @@ import CustomInputField from "./components/CustomInputField";
 import CustomPicker from "./components/CustomPicker";
 import CustomPieChart from "./components/CustomPieChart";
 import SpendingsScreen from "./screens/SpendingsScreen";
+import CollectorTile from "./components/CollectorTile";
+import AddCollectorBtn from "./components/AddCollectorBtn";
+import CollectorScreen from "./screens/CollectorScreen";
 
 export default function App() {
 	const [loaded] = loadCustomFonts();
@@ -32,3 +35,8 @@ const styles = StyleSheet.create({
 		gap: 30,
 	},
 });
+
+// TODO:
+// 1. Plan Data Structure
+// 2. Complete Screens
+// 3. Set up navigation

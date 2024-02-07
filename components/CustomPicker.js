@@ -16,11 +16,7 @@ const CustomPicker = () => {
 				style={styles.picker}
 				dropdownIconRippleColor={"#D9D9D9"}
 			>
-				<Picker.Item
-					label="Option 1"
-					value="option1"
-					contentDescription="halo"
-				/>
+				<Picker.Item label="Option 1" value="option1" />
 				<Picker.Item label="Option 2" value="option2" />
 				<Picker.Item label="Option 3" value="option3" />
 			</Picker>

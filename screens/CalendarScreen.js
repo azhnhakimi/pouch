@@ -13,7 +13,6 @@ const CalendarScreen = () => {
 				<CalendarPanel />
 				<CalendarPanel />
 				<CalendarPanel />
-				<CalendarPanel />
 				<AddNewPanel text={"Add New Calendar"} />
 			</View>
 			<HeaderText text={"history"} />
