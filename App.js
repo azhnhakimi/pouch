@@ -1,16 +1,15 @@
-import { StyleSheet, View } from "react-native";
+import {
+	StyleSheet,
+	View,
+	SafeAreaView,
+	Platform,
+	StatusBar,
+} from "react-native";
 
 import LoadingScreen from "./screens/LoadingScreen";
 import { loadCustomFonts } from "./utils/FontLoader";
 
-import CalendarScreen from "./screens/CalendarScreen";
-import CustomInputField from "./components/CustomInputField";
-import CustomPicker from "./components/CustomPicker";
-import CustomPieChart from "./components/CustomPieChart";
-import SpendingsScreen from "./screens/SpendingsScreen";
-import CollectorTile from "./components/CollectorTile";
-import AddCollectorBtn from "./components/AddCollectorBtn";
-import CollectorScreen from "./screens/CollectorScreen";
+import Navigation from "./Navigation";
 
 export default function App() {
 	const [loaded] = loadCustomFonts();
@@ -20,19 +19,24 @@ export default function App() {
 	}
 
 	return (
-		<View style={styles.container}>
-			<SpendingsScreen />
-		</View>
+		<SafeAreaView style={styles.safeContainer}>
+			<View style={styles.container}>
+				<Navigation />
+			</View>
+		</SafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
+	safeContainer: {
+		flex: 1,
+		backgroundColor: "#ffffff",
+		paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+	},
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
+		backgroundColor: "#ffffff",
 		paddingHorizontal: 10,
-		paddingTop: 60,
-		gap: 30,
 	},
 });
 

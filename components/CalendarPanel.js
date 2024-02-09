@@ -1,12 +1,18 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import CalendarIcon from "./CalendarIcon";
 import CalendarDetails from "./CalendarDetails";
 import CalendarSummary from "./CalendarSummary";
 
-const CalendarPanel = () => {
+const CalendarPanel = ({ transactionsData }) => {
+	const { navigate } = useNavigation();
+
 	return (
-		<TouchableOpacity style={styles.container}>
+		<TouchableOpacity
+			style={styles.container}
+			onPress={() => navigate("SpendingsScreen")}
+		>
 			<View style={styles.topHalf}>
 				<CalendarIcon text={"FEB"} />
 				<CalendarDetails mainText={"February"} subText={"2024"} />

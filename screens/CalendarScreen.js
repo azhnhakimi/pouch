@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 
 import HeaderText from "../components/HeaderText";
@@ -5,7 +6,15 @@ import CalendarPanel from "../components/CalendarPanel";
 import AddNewPanel from "../components/AddNewPanel";
 import CustomBarChart from "../components/CustomBarChart";
 
+import dataset from "../data/dataset.json";
+
 const CalendarScreen = () => {
+	const [data, setData] = useState(null);
+
+	useEffect(() => {
+		setData(dataset.data);
+	}, []);
+
 	return (
 		<View style={styles.container}>
 			<HeaderText text={"monthly spendings"} />
@@ -28,6 +37,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#ffffff",
 		justifyContent: "flex-start",
 		alignItems: "center",
+		paddingTop: 30,
 	},
 	panelContainer: {
 		marginTop: 20,

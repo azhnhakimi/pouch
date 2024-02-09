@@ -32,6 +32,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		width: "100%",
+		backgroundColor: "#ffffff",
+		paddingTop: 30,
 	},
 	tileContainer: {
 		marginTop: 35,
