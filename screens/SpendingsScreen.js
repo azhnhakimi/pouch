@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { ref, onValue, getDatabase, set } from "firebase/database";
@@ -24,6 +24,7 @@ const SpendingsScreen = () => {
 	const monthYear = route.params?.monthYear;
 
 	const [inMonthTransactions, setinMonthTransactions] = useState([]);
+	const alertProRef = useRef(null);
 
 	useEffect(() => {
 		navigation.setOptions({
@@ -33,7 +34,12 @@ const SpendingsScreen = () => {
 				fontFamily: "Amaranth",
 				fontSize: 20,
 			},
-			headerRight: () => <KebabMenu onPress={handleKebabMenuPress} />,
+			headerRight: () => (
+				<KebabMenu
+					onPress={handleKebabMenuPress}
+					text={"Delete  calendar"}
+				/>
+			),
 		});
 
 		const transactionRef = ref(
@@ -56,7 +62,7 @@ const SpendingsScreen = () => {
 	};
 
 	const handleKebabMenuPress = () => {
-		this.AlertPro.open();
+		alertProRef.current.open();
 	};
 
 	const handleConfirmDeleteCalendar = () => {
@@ -68,7 +74,7 @@ const SpendingsScreen = () => {
 					type: "default",
 					backgroundColor: "#198754",
 				});
-				this.AlertPro.close();
+				alertProRef.current.close();
 				navigation.goBack();
 			})
 			.catch((error) => {
@@ -78,7 +84,7 @@ const SpendingsScreen = () => {
 					type: "default",
 					backgroundColor: "#DC2127",
 				});
-				this.AlertPro.close();
+				alertProRef.current.close();
 			});
 	};
 
@@ -96,6 +102,7 @@ const SpendingsScreen = () => {
 								date={getDate(data.date)}
 								tag={data.tag}
 								comments={data.comments}
+								fullDate={data.date}
 							/>
 						))}
 				<AddNewPanel
@@ -106,12 +113,11 @@ const SpendingsScreen = () => {
 
 			<HeaderText text={"Data"} />
 			<CustomPieChart monthYear={monthYear} />
+
 			<AlertPro
-				ref={(ref) => {
-					this.AlertPro = ref;
-				}}
+				ref={alertProRef}
 				onConfirm={() => handleConfirmDeleteCalendar()}
-				onCancel={() => this.AlertPro.close()}
+				onCancel={() => alertProRef.current.close()}
 				title="Delete Confirmation"
 				message={`Are you sure to delete this calendar? All data for this month will be lost forever!`}
 				textCancel="Cancel"

@@ -14,6 +14,7 @@ import TopBarComp from "./components/TopBarComp";
 import NewCollectorScreen from "./screens/NewCollectorScreen";
 import NewTransactionScreen from "./screens/NewTransactionScreen";
 import ShowMoreCalendarScreen from "./screens/ShowMoreCalendarScreen";
+import EditTransactionScreen from "./screens/EditTransactionScreen";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -25,6 +26,7 @@ const getRouteName = (route) => {
 		"NewCalendarScreen",
 		"InnerTransactionStack",
 		"ShowMoreCalendarScreen",
+		"EditTransactionScreen",
 	];
 
 	if (routeName && swipeDisabledRoutes.includes(routeName)) {
@@ -49,6 +51,11 @@ function InnerTransactionStack() {
 				name="NewTransactionScreen"
 				component={NewTransactionScreen}
 				options={{ title: "New Transaction Menu" }}
+			/>
+			<Stack.Screen
+				name="EditTransactionScreen"
+				component={EditTransactionScreen}
+				options={{ title: "Edit Transaction Menu" }}
 			/>
 		</Stack.Navigator>
 	);

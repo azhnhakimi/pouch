@@ -15,7 +15,7 @@ import {
 
 const DIMENSIONS = 32;
 
-const KebabMenu = ({ onPress }) => {
+const KebabMenu = ({ onPress, text }) => {
 	return (
 		<Menu style={styles.rounded}>
 			<MenuTrigger customStyles={menuTriggerStyles}>
@@ -26,10 +26,7 @@ const KebabMenu = ({ onPress }) => {
 				/>
 			</MenuTrigger>
 			<MenuOptions customStyles={menuOptionsStyles}>
-				<MenuOption
-					onSelect={() => onPress()}
-					text="Delete  calendar"
-				/>
+				<MenuOption onSelect={() => onPress()} text={text} />
 			</MenuOptions>
 		</Menu>
 	);

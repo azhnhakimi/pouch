@@ -1,4 +1,5 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { getLegendColor } from "../utils/Color";
 
@@ -6,9 +7,21 @@ import CalendarIcon from "./CalendarIcon";
 import CalendarDetails from "./CalendarDetails";
 import TagIcon from "./TagIcon";
 
-const TransactionPanel = ({ date, amount, tag, comments }) => {
+const TransactionPanel = ({ date, amount, tag, comments, fullDate }) => {
+	const navigation = useNavigation();
+
 	return (
-		<TouchableOpacity style={styles.container}>
+		<TouchableOpacity
+			style={styles.container}
+			onPress={() =>
+				navigation.navigate("EditTransactionScreen", {
+					fullDate,
+					amount,
+					tag,
+					comments,
+				})
+			}
+		>
 			<View style={styles.topHalf}>
 				<CalendarIcon text={date} />
 				<CalendarDetails mainText={`RM ${amount}`} subText={comments} />

@@ -34,6 +34,29 @@ export const getMonthIndex = (month) => {
 	return months.indexOf(month);
 };
 
+export const getMonthName = (monthNumber) => {
+	const months = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	];
+
+	const index = parseInt(monthNumber, 10) - 1;
+
+	if (index >= 0 && index < 12) {
+		return months[index];
+	}
+};
+
 export const getBarHeight = (data) => {
 	let highestHeight = 0;
 
