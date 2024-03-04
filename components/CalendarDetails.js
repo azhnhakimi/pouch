@@ -14,6 +14,7 @@ const CalendarDetails = ({ mainText, subText }) => {
 const styles = StyleSheet.create({
 	container: {
 		justifyContent: "center",
+		// backgroundColor: "pink",
 	},
 	mainText: {
 		fontFamily: "Amaranth",

@@ -1,16 +1,16 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const TopBarLabel = () => {
+const TopBarLabel = ({ value }) => {
 	return (
 		<View style={styles.container}>
-			<Text style={styles.text}>69</Text>
+			<Text style={styles.text}>{value}</Text>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		width: "200%",
+		width: "300%",
 		height: 30,
 		justifyContent: "center",
 		alignItems: "center",
@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 12,
 		color: "#ADADAD",
+		// backgroundColor: "red",
 	},
 });
 

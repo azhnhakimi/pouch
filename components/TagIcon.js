@@ -1,9 +1,11 @@
 import { View, StyleSheet, Text } from "react-native";
 import { SvgXml } from "react-native-svg";
 
+import { getContrastTextColor } from "../utils/Color";
+
 const HEIGHT = 35;
 const WIDTH = (HEIGHT / 133) * 405;
-const FONTSIZE = 0.35 * HEIGHT;
+const FONTSIZE = 0.3 * HEIGHT;
 
 const TagIcon = ({ text, fillColor }) => {
 	const svgXml =
@@ -16,7 +18,14 @@ const TagIcon = ({ text, fillColor }) => {
 	return (
 		<View style={styles.container}>
 			<SvgXml xml={svgXml} width="100%" height="100%" />
-			<Text style={styles.text}>{text}</Text>
+			<Text
+				style={[
+					styles.text,
+					{ color: getContrastTextColor(fillColor) },
+				]}
+			>
+				{text}
+			</Text>
 		</View>
 	);
 };
@@ -36,6 +45,7 @@ const styles = StyleSheet.create({
 		fontSize: FONTSIZE,
 		top: "30%",
 		left: "22%",
+		textTransform: "capitalize",
 	},
 });
 

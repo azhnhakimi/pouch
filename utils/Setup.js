@@ -1,6 +1,6 @@
 import { StatusBar, Platform } from "react-native";
 
-export const setup = () => {
+export const setUpStatusBar = () => {
 	if (Platform.OS === "android") {
 		StatusBar.setBackgroundColor("#000000");
 		StatusBar.setBarStyle("light-content");

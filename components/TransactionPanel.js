@@ -1,21 +1,20 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
+import { getLegendColor } from "../utils/Color";
+
 import CalendarIcon from "./CalendarIcon";
 import CalendarDetails from "./CalendarDetails";
 import TagIcon from "./TagIcon";
 
-const TransactionPanel = () => {
+const TransactionPanel = ({ date, amount, tag, comments }) => {
 	return (
 		<TouchableOpacity style={styles.container}>
 			<View style={styles.topHalf}>
-				<CalendarIcon text={"25"} />
-				<CalendarDetails
-					mainText={"RM 20.20"}
-					subText={"Very expensive dinner"}
-				/>
+				<CalendarIcon text={date} />
+				<CalendarDetails mainText={`RM ${amount}`} subText={comments} />
 			</View>
 			<View style={styles.bottomHalf}>
-				<TagIcon text={"Personal Care"} fillColor={"#ffffff"} />
+				<TagIcon text={tag} fillColor={getLegendColor(tag)} />
 			</View>
 		</TouchableOpacity>
 	);

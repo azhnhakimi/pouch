@@ -1,15 +1,9 @@
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 
-const AddNewPanel = ({ text }) => {
-	const { navigate } = useNavigation();
-
+const AddNewPanel = ({ text, handleOnPress }) => {
 	return (
-		<TouchableOpacity
-			style={styles.container}
-			onPress={() => navigate("newcalendarscreen")}
-		>
+		<TouchableOpacity style={styles.container} onPress={handleOnPress}>
 			<AntDesign name="plus" size={24} color="black" />
 			<Text style={styles.text}>{text}</Text>
 		</TouchableOpacity>

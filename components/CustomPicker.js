@@ -1,26 +1,34 @@
 import { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
-const CustomPicker = () => {
-	const [selectedValue, setSelectedValue] = useState("");
-
+const CustomPicker = ({
+	values,
+	handleFocus,
+	handleBlur,
+	isFocused,
+	text,
+	selectedValue,
+	setSelectedValue,
+}) => {
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, isFocused && styles.focused]}>
 			<Picker
-				mode="dropdown"
+				// mode="dropdown"
 				selectedValue={selectedValue}
 				onValueChange={(itemValue, itemIndex) =>
 					setSelectedValue(itemValue)
 				}
 				style={styles.picker}
 				dropdownIconRippleColor={"#D9D9D9"}
+				onFocus={handleFocus}
+				onBlur={handleBlur}
 			>
-				<Picker.Item label="Option 1" value="option1" />
-				<Picker.Item label="Option 2" value="option2" />
-				<Picker.Item label="Option 3" value="option3" />
+				{Object.entries(values).map(([label, value]) => (
+					<Picker.Item key={value} label={value} value={value} />
+				))}
 			</Picker>
-			<Text style={styles.text}>Date</Text>
+			<Text style={styles.text}>{text}</Text>
 		</View>
 	);
 };
@@ -29,7 +37,7 @@ const styles = StyleSheet.create({
 	container: {
 		// backgroundColor: "pink",
 		width: "100%",
-		height: 50,
+		height: 55,
 		borderColor: "#C9C9C9",
 		borderWidth: 1,
 		justifyContent: "center",
@@ -48,6 +56,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		fontFamily: "Roboto",
 		color: "#C9C9C9",
+	},
+	focused: {
+		borderColor: "#000000",
+		borderWidth: 1,
 	},
 });
 

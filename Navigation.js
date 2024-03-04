@@ -1,5 +1,8 @@
-import { Dimensions } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { Dimensions, Text } from "react-native";
+import {
+	NavigationContainer,
+	getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -8,23 +11,110 @@ import CollectorScreen from "./screens/CollectorScreen";
 import NewCalendarScreen from "./screens/NewCalendarScreen";
 import SpendingsScreen from "./screens/SpendingsScreen";
 import TopBarComp from "./components/TopBarComp";
+import NewCollectorScreen from "./screens/NewCollectorScreen";
+import NewTransactionScreen from "./screens/NewTransactionScreen";
+import ShowMoreCalendarScreen from "./screens/ShowMoreCalendarScreen";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function StackGroup() {
+const getRouteName = (route) => {
+	const routeName = getFocusedRouteNameFromRoute(route);
+	const swipeDisabledRoutes = [
+		"NewCollectorScreen",
+		"NewCalendarScreen",
+		"InnerTransactionStack",
+		"ShowMoreCalendarScreen",
+	];
+
+	if (routeName && swipeDisabledRoutes.includes(routeName)) {
+		return "none";
+	}
+	return "flex";
+};
+
+function InnerTransactionStack() {
+	return (
+		<Stack.Navigator
+			screenOptions={{
+				headerTitleAlign: "center",
+				headerTitleStyle: {
+					fontFamily: "Amaranth",
+					fontSize: 20,
+				},
+			}}
+		>
+			<Stack.Screen name="SpendingsScreen" component={SpendingsScreen} />
+			<Stack.Screen
+				name="NewTransactionScreen"
+				component={NewTransactionScreen}
+				options={{ title: "New Transaction Menu" }}
+			/>
+		</Stack.Navigator>
+	);
+}
+
+function DebtStackGroup() {
 	return (
 		<Stack.Navigator>
 			<Stack.Screen
-				name="tabgroup"
-				component={TabGroup}
+				name="CollectorScreen"
+				component={CollectorScreen}
 				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
-				name="newcalendarscreen"
-				component={NewCalendarScreen}
+				name="NewCollectorScreen"
+				component={NewCollectorScreen}
 			/>
-			<Stack.Screen name="SpendingsScreen" component={SpendingsScreen} />
+		</Stack.Navigator>
+	);
+}
+
+const config = {
+	animation: "spring",
+	config: {
+		stiffness: 10000,
+		damping: 500,
+		mass: 3,
+		overshootClamping: true,
+		restDisplacementThreshold: 0.01,
+		restSpeedThreshold: 0.01,
+	},
+};
+
+function TransactionStackGroup() {
+	return (
+		<Stack.Navigator
+			screenOptions={{
+				headerTitleAlign: "center",
+				headerTitleStyle: {
+					fontFamily: "Amaranth",
+					fontSize: 20,
+				},
+				animation: "slide_from_bottom",
+				animationTypeForReplace: "push",
+			}}
+		>
+			<Stack.Screen
+				name="CalendarScreen"
+				component={CalendarScreen}
+				options={{ headerShown: false }}
+			/>
+			<Stack.Screen
+				name="NewCalendarScreen"
+				component={NewCalendarScreen}
+				options={{}}
+			/>
+			<Stack.Screen
+				name="InnerTransactionStack"
+				component={InnerTransactionStack}
+				options={{ headerShown: false }}
+			/>
+			<Stack.Screen
+				name="ShowMoreCalendarScreen"
+				component={ShowMoreCalendarScreen}
+				options={{ title: "Monthly Spendings List" }}
+			/>
 		</Stack.Navigator>
 	);
 }
@@ -33,7 +123,7 @@ function TabGroup() {
 	return (
 		<Tab.Navigator
 			tabBarPosition="bottom"
-			initialRouteName="transactions"
+			initialRouteName="Transactions"
 			initialLayout={{
 				width: Dimensions.get("window").width,
 			}}
@@ -45,11 +135,14 @@ function TabGroup() {
 				},
 				tabBarIndicatorStyle: {
 					backgroundColor: "#000000",
+					height: 3,
 				},
+				swipeEnabled: false,
+				tabBarStyle: { display: getRouteName(route) },
 			})}
 		>
-			<Tab.Screen name="transactions" component={CalendarScreen} />
-			<Tab.Screen name="debts" component={CollectorScreen} />
+			<Tab.Screen name="Transactions" component={TransactionStackGroup} />
+			<Tab.Screen name="Debts" component={DebtStackGroup} />
 		</Tab.Navigator>
 	);
 }
@@ -57,7 +150,7 @@ function TabGroup() {
 const Navigation = () => {
 	return (
 		<NavigationContainer>
-			<StackGroup />
+			<TabGroup />
 		</NavigationContainer>
 	);
 };

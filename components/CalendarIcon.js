@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
 		fontFamily: "AnekBangla",
 		fontSize: FONTSIZE,
 		top: "32%",
+		textTransform: "uppercase",
 	},
 });
 

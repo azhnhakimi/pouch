@@ -3,9 +3,9 @@ import { AntDesign } from "@expo/vector-icons";
 
 const dimension = 80;
 
-const AddCollectorBtn = () => {
+const AddCollectorBtn = ({ onPress }) => {
 	return (
-		<TouchableOpacity style={styles.container}>
+		<TouchableOpacity style={styles.container} onPress={onPress}>
 			<AntDesign name="plus" size={45} color="black" />
 		</TouchableOpacity>
 	);

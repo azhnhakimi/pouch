@@ -6,7 +6,7 @@ const CalendarSummary = ({ mainText, subText }) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.mainText}>{mainText}</Text>
-			<Text style={styles.subText}>{subText}</Text>
+			<Text style={styles.subText}>{`RM ${subText}`}</Text>
 		</View>
 	);
 };

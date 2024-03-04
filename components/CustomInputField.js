@@ -1,22 +1,15 @@
 import React, { useState } from "react";
 import { View, TextInput, StyleSheet, Text } from "react-native";
 
-const CustomInputField = ({ headerText, height }) => {
-	const [text, setText] = useState("");
-	const [isFocused, setIsFocused] = useState(false);
-
-	const handleFocus = () => {
-		setIsFocused(true);
-	};
-
-	const handleBlur = () => {
-		setIsFocused(false);
-	};
-
-	const onChangeText = (inputText) => {
-		setText(inputText);
-	};
-
+const CustomInputField = ({
+	headerText,
+	height,
+	isFocused,
+	handleFocus,
+	handleBlur,
+	onChangeText,
+	text,
+}) => {
 	return (
 		<View
 			style={[
@@ -52,7 +45,7 @@ const styles = StyleSheet.create({
 		fontFamily: "Roboto",
 		height: "100%",
 		textAlignVertical: "top",
-		fontSize: 20,
+		fontSize: 16,
 		color: "#C9C9C9",
 	},
 	text: {
@@ -63,10 +56,11 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		fontFamily: "Roboto",
 		color: "#C9C9C9",
+		paddingVertical: 0,
 	},
 	focused: {
 		borderColor: "#000000",
-		borderWidth: 2,
+		borderWidth: 1,
 	},
 	textFocused: {
 		color: "#000000",

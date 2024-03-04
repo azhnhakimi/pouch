@@ -3,11 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 const dimension = 100;
 const borderRadius = dimension / 2;
 
-const PieInnerComp = () => {
+const PieInnerComp = ({ totalAmount }) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.text}>TOTAL</Text>
-			<Text style={styles.text}>RM 1412.69</Text>
+			<Text style={styles.text}>{`RM ${totalAmount}`}</Text>
 		</View>
 	);
 };
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontFamily: "AnekBangla",
-		fontSize: 16,
+		fontSize: 14,
 	},
 });
 

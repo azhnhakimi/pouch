@@ -1,15 +1,20 @@
 import { View, StyleSheet, FlatList } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import AddCollectorBtn from "../components/AddCollectorBtn";
 import CollectorTile from "../components/CollectorTile";
 import HeaderText from "../components/HeaderText";
 
 const CollectorScreen = () => {
+	const { navigate } = useNavigation();
+
 	return (
 		<View style={styles.container}>
 			<HeaderText text={"Collectors"} />
 			<View style={styles.tileContainer}>
-				<AddCollectorBtn />
+				<AddCollectorBtn
+					onPress={() => navigate("NewCollectorScreen")}
+				/>
 				<CollectorTile name={"goku"} />
 				<CollectorTile name={"goku"} />
 				<CollectorTile name={"goku"} />

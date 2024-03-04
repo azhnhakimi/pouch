@@ -1,26 +1,45 @@
+import { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { getShortMonthName } from "../utils/TextFormat";
 
 import CalendarIcon from "./CalendarIcon";
 import CalendarDetails from "./CalendarDetails";
 import CalendarSummary from "./CalendarSummary";
 
-const CalendarPanel = ({ transactionsData }) => {
+const CalendarPanel = ({ monthYear, totalAmount }) => {
 	const { navigate } = useNavigation();
+
+	const [yearStr, setYearStr] = useState("");
+	const [monthStr, setMonthStr] = useState("");
+
+	useEffect(() => {
+		setYearStr(monthYear.substring(monthYear.length - 4));
+		setMonthStr(monthYear.substring(0, monthYear.length - 4));
+	}, []);
 
 	return (
 		<TouchableOpacity
 			style={styles.container}
-			onPress={() => navigate("SpendingsScreen")}
+			onPress={() =>
+				navigate("InnerTransactionStack", {
+					screen: "SpendingsScreen",
+					params: {
+						yearStr: yearStr,
+						monthStr: monthStr,
+						monthYear: monthYear,
+					},
+				})
+			}
 		>
 			<View style={styles.topHalf}>
-				<CalendarIcon text={"FEB"} />
-				<CalendarDetails mainText={"February"} subText={"2024"} />
+				<CalendarIcon text={getShortMonthName(monthStr)} />
+				<CalendarDetails mainText={monthStr} subText={yearStr} />
 			</View>
 			<View style={styles.bottomHalf}>
 				<CalendarSummary
 					mainText={"Total Amount Spent"}
-					subText={"RM 69.69"}
+					subText={totalAmount}
 				/>
 			</View>
 		</TouchableOpacity>

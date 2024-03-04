@@ -1,8 +1,14 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	handleOnPress,
+} from "react-native";
 
-const SaveBtn = () => {
+const SaveBtn = ({ handleOnPress }) => {
 	return (
-		<TouchableOpacity style={styles.container}>
+		<TouchableOpacity style={styles.container} onPress={handleOnPress}>
 			<Text style={styles.text}>SAVE</Text>
 		</TouchableOpacity>
 	);
