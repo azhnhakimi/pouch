@@ -136,17 +136,17 @@ const NewTransactionScreen = () => {
 		get(child(dbRef, `transactions/${monthYear}/inMonthTransactions`))
 			.then((snapshot) => {
 				if (snapshot.exists()) {
-					const intMonthTransactionsArr = snapshot.val();
+					const inMonthTransactionsArr = snapshot.val();
 					const newTransaction = {
 						date: displayText,
 						amount: Number(amount).toFixed(2),
 						tag: tag,
 						comments: comments.trim(),
 					};
-					intMonthTransactionsArr.push(newTransaction);
+					inMonthTransactionsArr.push(newTransaction);
 
 					let currentTotalAmount = 0;
-					intMonthTransactionsArr.forEach((transaction) => {
+					inMonthTransactionsArr.forEach((transaction) => {
 						const transactionAmount = Number(transaction.amount);
 						currentTotalAmount =
 							currentTotalAmount + transactionAmount;
@@ -163,17 +163,17 @@ const NewTransactionScreen = () => {
 							firebaseDatabase,
 							`transactions/${monthYear}/inMonthTransactions`
 						),
-						intMonthTransactionsArr
+						inMonthTransactionsArr
 					);
 				} else {
-					const intMonthTransactionsArr = [];
+					const inMonthTransactionsArr = [];
 					const newTransaction = {
 						date: displayText,
 						amount: Number(amount).toFixed(2),
 						tag: tag,
 						comments: comments.trim(),
 					};
-					intMonthTransactionsArr.push(newTransaction);
+					inMonthTransactionsArr.push(newTransaction);
 					set(
 						ref(
 							firebaseDatabase,
@@ -186,7 +186,7 @@ const NewTransactionScreen = () => {
 							firebaseDatabase,
 							`transactions/${monthYear}/inMonthTransactions`
 						),
-						intMonthTransactionsArr
+						inMonthTransactionsArr
 					);
 				}
 			})

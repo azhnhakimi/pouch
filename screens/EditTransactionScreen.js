@@ -8,12 +8,14 @@ import {
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getDatabase, ref, child, get, set, update } from "firebase/database";
+import { showMessage } from "react-native-flash-message";
 import AlertPro from "react-native-alert-pro";
 
 import {
 	getMonthIndex,
 	getMonthName,
 	sortInMonthTransactions,
+	isValidNumericValue,
 } from "../utils/DataFormat";
 import { firebaseDatabase } from "../firebaseConfig";
 
@@ -51,7 +53,6 @@ const EditTransactionScreen = () => {
 	};
 
 	const alertProRef = useRef(null);
-	const [inMonthTransactionsArr, setinMonthTransactionsArr] = useState([]);
 	const [focusedInput, setFocusedInput] = useState("");
 	const [amount, setAmount] = useState(passedInAmount);
 	const [tag, setTag] = useState(passedInTag);
@@ -202,7 +203,159 @@ const EditTransactionScreen = () => {
 		navigation.goBack();
 	};
 
-	const handleSaveBtn = () => {};
+	const handleSaveBtn = () => {
+		if (
+			displayText.trim() === "" ||
+			amount.trim() === "" ||
+			comments.trim() === ""
+		) {
+			showMessage({
+				message: "Error",
+				description: "Do not leave empty fields!",
+				type: "default",
+				backgroundColor: "#DC2127",
+			});
+			return;
+		} else if (!isValidNumericValue(amount)) {
+			showMessage({
+				message: "Error",
+				description: "Enter a valid numeric value for amount!",
+				type: "default",
+				backgroundColor: "#DC2127",
+			});
+			return;
+		}
+
+		const dbRef = ref(getDatabase());
+		const monthYearStr = `${getMonthName(passedInMonth)}${passedInYear}`;
+		get(
+			child(dbRef, `transactions/${monthYearStr}/inMonthTransactions`)
+		).then((snapshot) => {
+			if (snapshot.exists()) {
+				const inMonthTransactionsArr = sortInMonthTransactions(
+					snapshot.val()
+				);
+				inMonthTransactionsArr.splice(transactionIndex, 1);
+				const updatedTransactionObject = {
+					date: displayText,
+					amount: Number(amount).toFixed(2),
+					tag: tag,
+					comments: comments.trim(),
+				};
+				inMonthTransactionsArr.push(updatedTransactionObject);
+
+				let currentTotalAmount = 0;
+				inMonthTransactionsArr.forEach((transaction) => {
+					const transactionAmount = parseInt(transaction.amount);
+					currentTotalAmount += transactionAmount;
+				});
+				set(
+					ref(
+						firebaseDatabase,
+						`transactions/${monthYearStr}/inMonthTransactions`
+					),
+					inMonthTransactionsArr
+				);
+				set(
+					ref(
+						firebaseDatabase,
+						`transactions/${monthYearStr}/totalAmount`
+					),
+					currentTotalAmount
+				);
+
+				get(
+					child(dbRef, `transactions/${monthYearStr}/tagTotals`)
+				).then((snapshot) => {
+					const tagTotalsData = snapshot.val();
+
+					let oldTagKey = passedInTag.toLowerCase();
+					if (oldTagKey === "personal care") {
+						oldTagKey = "personalCare";
+					}
+
+					let tagKey = tag.toLowerCase();
+					if (tagKey === "personal care") {
+						tagKey = "personalCare";
+					}
+
+					if (oldTagKey === tagKey) {
+						const oldTransactionAmount = parseInt(passedInAmount);
+						let currentTagAmount = parseInt(tagTotalsData[tagKey]);
+						currentTagAmount =
+							currentTagAmount -
+							oldTransactionAmount +
+							parseInt(amount);
+
+						const tempoRef = getDatabase();
+						update(
+							ref(
+								tempoRef,
+								`transactions/${monthYearStr}/tagTotals`
+							),
+							{
+								[tagKey]: currentTagAmount,
+							}
+						)
+							.then(() => {
+								showMessage({
+									message: "Success",
+									description:
+										"Transaction has been updated!",
+									type: "default",
+									backgroundColor: "#198754",
+								});
+							})
+							.catch((error) => {
+								console.log(error);
+							});
+					} else {
+						const oldTransactionAmount = parseInt(passedInAmount);
+						const oldTagOldAmount = parseInt(
+							tagTotalsData[oldTagKey]
+						);
+						const oldTagCurrentAmount =
+							oldTagOldAmount - oldTransactionAmount;
+
+						const newTagOldAmount = parseInt(tagTotalsData[tagKey]);
+						const newTagCurrentAmount =
+							newTagOldAmount + parseInt(amount);
+
+						const tempoRef = getDatabase();
+						update(
+							ref(
+								tempoRef,
+								`transactions/${monthYearStr}/tagTotals`
+							),
+							{
+								[oldTagKey]: oldTagCurrentAmount,
+							}
+						).catch((error) => {
+							console.log(error);
+						});
+						update(
+							ref(
+								tempoRef,
+								`transactions/${monthYearStr}/tagTotals`
+							),
+							{
+								[tagKey]: newTagCurrentAmount,
+							}
+						).catch((error) => {
+							console.log(error);
+						});
+						showMessage({
+							message: "Success",
+							description: "Transaction has been updated!",
+							type: "default",
+							backgroundColor: "#198754",
+						});
+					}
+				});
+			}
+		});
+		navigation.goBack();
+	};
 
 	return (
 		<TouchableWithoutFeedback
