@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { ref, onValue } from "firebase/database";
 
 import { firebaseDatabase } from "../firebaseConfig";
@@ -31,14 +31,19 @@ const ShowMoreCalendarScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			{data.length !== 0 &&
-				data.map((monthlyTransaction) => (
-					<CalendarPanel
-						key={monthlyTransaction.monthYear}
-						monthYear={monthlyTransaction.monthYear}
-						totalAmount={monthlyTransaction.totalAmount}
-					/>
-				))}
+			{data.length !== 0 ? (
+				<FlatList
+					data={data}
+					renderItem={({ item }) => (
+						<CalendarPanel
+							key={item.monthYear}
+							monthYear={item.monthYear}
+							totalAmount={item.totalAmount}
+						/>
+					)}
+					showsVerticalScrollIndicator={false}
+				/>
+			) : null}
 		</View>
 	);
 };

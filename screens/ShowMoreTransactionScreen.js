@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { ref, onValue } from "firebase/database";
 import { useRoute } from "@react-navigation/native";
 
@@ -23,7 +23,7 @@ const ShowMoreTransactionScreen = () => {
 		onValue(transactionRef, (snapshot) => {
 			if (snapshot.exists()) {
 				const retrievedData = snapshot.val();
-				setinMonthTransactions(retrievedData);
+				setinMonthTransactions(sortInMonthTransactions(retrievedData));
 			} else {
 				setinMonthTransactions([]);
 			}
@@ -32,20 +32,22 @@ const ShowMoreTransactionScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			{inMonthTransactions.length !== 0
-				? sortInMonthTransactions(inMonthTransactions).map(
-						(transaction, index) => (
-							<TransactionPanel
-								key={index}
-								amount={transaction.amount}
-								date={getDate(transaction.date)}
-								tag={transaction.tag}
-								comments={transaction.comments}
-								fullDate={transaction.date}
-							/>
-						)
-				  )
-				: null}
+			{inMonthTransactions && inMonthTransactions.length !== 0 ? (
+				<FlatList
+					data={inMonthTransactions}
+					renderItem={({ item, index }) => (
+						<TransactionPanel
+							amount={item.amount}
+							date={getDate(item.date)}
+							tag={item.tag}
+							comments={item.comments}
+							fullDate={item.date}
+							keyProp={index}
+						/>
+					)}
+					showsVerticalScrollIndicator={false}
+				/>
+			) : null}
 		</View>
 	);
 };
