@@ -6,6 +6,7 @@ import { firebaseDatabase } from "../firebaseConfig";
 import { sortArrayToMonthYear } from "../utils/DataFormat";
 
 import CalendarPanel from "../components/CalendarPanel";
+import NoCalendarPanel from "../components/NoCalendarPanel";
 
 const ShowMoreCalendarScreen = () => {
 	const [data, setData] = useState([]);
@@ -43,7 +44,9 @@ const ShowMoreCalendarScreen = () => {
 					)}
 					showsVerticalScrollIndicator={false}
 				/>
-			) : null}
+			) : (
+				<NoCalendarPanel />
+			)}
 		</View>
 	);
 };
@@ -53,6 +56,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: "100%",
 		backgroundColor: "#ffffff",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });
 

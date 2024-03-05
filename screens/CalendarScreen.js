@@ -11,6 +11,7 @@ import CalendarPanel from "../components/CalendarPanel";
 import AddNewPanel from "../components/AddNewPanel";
 import CustomBarChart from "../components/CustomBarChart";
 import ShowMorePrompt from "../components/ShowMorePrompt";
+import NoCalendarPanel from "../components/NoCalendarPanel";
 
 const CalendarScreen = () => {
 	const { navigate } = useNavigation();
@@ -50,7 +51,7 @@ const CalendarScreen = () => {
 				<ShowMorePrompt handleOnPress={showMoreCalendar} />
 			</View>
 			<View style={styles.panelContainer}>
-				{data.length !== 0 &&
+				{data && data.length !== 0 ? (
 					data
 						.slice(0, 3)
 						.map((monthlyTransaction) => (
@@ -59,7 +60,10 @@ const CalendarScreen = () => {
 								monthYear={monthlyTransaction.monthYear}
 								totalAmount={monthlyTransaction.totalAmount}
 							/>
-						))}
+						))
+				) : (
+					<NoCalendarPanel />
+				)}
 				<AddNewPanel
 					text={"Add New Calendar"}
 					handleOnPress={handleNewCalendar}

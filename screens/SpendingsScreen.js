@@ -16,6 +16,7 @@ import AddNewPanel from "../components/AddNewPanel";
 import CustomPieChart from "../components/CustomPieChart";
 import KebabMenu from "../components/KebabMenu";
 import ShowMorePrompt from "../components/ShowMorePrompt";
+import NoTransactionPanel from "../components/NoTransactionPanel";
 
 const SpendingsScreen = () => {
 	const navigation = useNavigation();
@@ -103,7 +104,7 @@ const SpendingsScreen = () => {
 			</View>
 
 			<View style={styles.panelContainer}>
-				{inMonthTransactions.length !== 0 &&
+				{inMonthTransactions.length !== 0 ? (
 					sortInMonthTransactions(inMonthTransactions)
 						.slice(0, 3)
 						.map((data, index) => (
@@ -116,7 +117,10 @@ const SpendingsScreen = () => {
 								fullDate={data.date}
 								keyProp={index}
 							/>
-						))}
+						))
+				) : (
+					<NoTransactionPanel />
+				)}
 				<AddNewPanel
 					text={"Add New Transaction"}
 					handleOnPress={handleNewTransaction}

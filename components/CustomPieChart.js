@@ -62,7 +62,7 @@ const CustomPieChart = ({ monthYear }) => {
 		return (
 			<View style={styles.errorMessageContainer}>
 				<Text style={styles.errorMessageText}>
-					No transactions yet? &#9760;
+					No purchases, no data. &#9760;
 				</Text>
 			</View>
 		);

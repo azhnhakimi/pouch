@@ -8,6 +8,7 @@ import { getDate } from "../utils/TextFormat";
 import { sortInMonthTransactions } from "../utils/DataFormat";
 
 import TransactionPanel from "../components/TransactionPanel";
+import NoTransactionPanel from "../components/NoTransactionPanel";
 
 const ShowMoreTransactionScreen = () => {
 	const route = useRoute();
@@ -47,7 +48,9 @@ const ShowMoreTransactionScreen = () => {
 					)}
 					showsVerticalScrollIndicator={false}
 				/>
-			) : null}
+			) : (
+				<NoTransactionPanel />
+			)}
 		</View>
 	);
 };
@@ -57,6 +60,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: "100%",
 		backgroundColor: "#ffffff",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });
 
