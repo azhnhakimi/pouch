@@ -1,15 +1,38 @@
+import { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { ref, onValue } from "firebase/database";
+
+import { firebaseDatabase } from "../firebaseConfig";
+import { sortArrayToMonthYear } from "../utils/DataFormat";
 
 import CalendarPanel from "../components/CalendarPanel";
 
 const ShowMoreCalendarScreen = () => {
-	const route = useRoute();
-	const yearMonthData = route.params?.data;
+	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		const transactionRef = ref(firebaseDatabase, "transactions");
+		onValue(transactionRef, (snapshot) => {
+			if (snapshot.exists()) {
+				const monthlyTransactionArray = [];
+				snapshot.forEach((childSnapshot) => {
+					const monthlyTransaction = {
+						monthYear: childSnapshot.key,
+						totalAmount: childSnapshot.val().totalAmount,
+					};
+					monthlyTransactionArray.push(monthlyTransaction);
+				});
+				setData(monthlyTransactionArray.sort(sortArrayToMonthYear));
+			} else {
+				setData([]);
+			}
+		});
+	}, []);
+
 	return (
 		<View style={styles.container}>
-			{yearMonthData &&
-				yearMonthData.map((monthlyTransaction) => (
+			{data.length !== 0 &&
+				data.map((monthlyTransaction) => (
 					<CalendarPanel
 						key={monthlyTransaction.monthYear}
 						monthYear={monthlyTransaction.monthYear}

@@ -7,9 +7,15 @@ import {
 } from "react-native";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { getDatabase, ref, child, get, set, update } from "firebase/database";
 import AlertPro from "react-native-alert-pro";
 
-import { getMonthIndex, getMonthName } from "../utils/DataFormat";
+import {
+	getMonthIndex,
+	getMonthName,
+	sortInMonthTransactions,
+} from "../utils/DataFormat";
+import { firebaseDatabase } from "../firebaseConfig";
 
 import HeaderText from "../components/HeaderText";
 import CustomDatePicker from "../components/CustomDatePicker";
@@ -29,6 +35,7 @@ const EditTransactionScreen = () => {
 	const passedInAmount = route.params?.amount;
 	const passedInTag = route.params?.tag;
 	const passedInComments = route.params?.comments;
+	const transactionIndex = route.params?.keyProp;
 
 	const tagValues = {
 		Food: "Food",
@@ -43,18 +50,8 @@ const EditTransactionScreen = () => {
 		Miscellaneous: "Miscellaneous",
 	};
 
-	useEffect(() => {
-		navigation.setOptions({
-			headerRight: () => (
-				<KebabMenu
-					onPress={handleKebabMenuPress}
-					text={"Delete  transaction"}
-				/>
-			),
-		});
-	});
-
 	const alertProRef = useRef(null);
+	const [inMonthTransactionsArr, setinMonthTransactionsArr] = useState([]);
 	const [focusedInput, setFocusedInput] = useState("");
 	const [amount, setAmount] = useState(passedInAmount);
 	const [tag, setTag] = useState(passedInTag);
@@ -67,6 +64,17 @@ const EditTransactionScreen = () => {
 		)
 	);
 	const [displayText, setDisplayText] = useState(fullDate);
+
+	useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<KebabMenu
+					onPress={handleKebabMenuPress}
+					text={"Delete  transaction"}
+				/>
+			),
+		});
+	}, []);
 
 	const handleInputFieldFocus = (fieldName) => {
 		setFocusedInput(fieldName);
@@ -131,7 +139,67 @@ const EditTransactionScreen = () => {
 	};
 
 	const handleConfirmDeleteTransaction = () => {
+		const dbRef = ref(getDatabase());
+		const monthYearStr = `${getMonthName(passedInMonth)}${passedInYear}`;
+		get(
+			child(dbRef, `transactions/${monthYearStr}/inMonthTransactions`)
+		).then((snapshot) => {
+			if (snapshot.exists()) {
+				const data = sortInMonthTransactions(snapshot.val());
+				const transactionToBeRemoved = data.splice(
+					transactionIndex,
+					1
+				)[0];
+				set(
+					ref(
+						firebaseDatabase,
+						`transactions/${monthYearStr}/inMonthTransactions`
+					),
+					data
+				);
+
+				// update total amount
+				let currentTotalAmount = 0;
+				data.forEach((transaction) => {
+					currentTotalAmount =
+						currentTotalAmount + parseInt(transaction.amount);
+				});
+				set(
+					ref(
+						firebaseDatabase,
+						`transactions/${monthYearStr}/totalAmount`
+					),
+					currentTotalAmount
+				);
+
+				// update total tags
+				get(
+					child(dbRef, `transactions/${monthYearStr}/tagTotals`)
+				).then((snapshot) => {
+					const tagTotalsData = snapshot.val();
+					let tagKey = transactionToBeRemoved.tag.toLowerCase();
+					if (tagKey === "personal care") {
+						tagKey = "personalCare";
+					}
+					const tagToBeUpdatedCurrentValue = parseInt(
+						tagTotalsData[tagKey]
+					);
+					const newTagValue =
+						tagToBeUpdatedCurrentValue -
+						parseInt(transactionToBeRemoved.amount);
+					const tempoRef = getDatabase();
+					update(
+						ref(tempoRef, `transactions/${monthYearStr}/tagTotals`),
+						{
+							[tagKey]: newTagValue,
+						}
+					).catch((error) => console.log(error + "flag 2"));
+				});
+			}
+		});
+
 		alertProRef.current.close();
+		navigation.goBack();
 	};
 
 	const handleSaveBtn = () => {};

@@ -40,7 +40,7 @@ const CalendarScreen = () => {
 	}
 
 	function showMoreCalendar() {
-		navigate("ShowMoreCalendarScreen", { data });
+		navigate("ShowMoreCalendarScreen");
 	}
 
 	return (
@@ -50,7 +50,7 @@ const CalendarScreen = () => {
 				<ShowMorePrompt handleOnPress={showMoreCalendar} />
 			</View>
 			<View style={styles.panelContainer}>
-				{data &&
+				{data.length !== 0 &&
 					data
 						.slice(0, 3)
 						.map((monthlyTransaction) => (

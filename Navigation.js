@@ -15,6 +15,7 @@ import NewCollectorScreen from "./screens/NewCollectorScreen";
 import NewTransactionScreen from "./screens/NewTransactionScreen";
 import ShowMoreCalendarScreen from "./screens/ShowMoreCalendarScreen";
 import EditTransactionScreen from "./screens/EditTransactionScreen";
+import ShowMoreTransactionScreen from "./screens/ShowMoreTransactionScreen";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -56,6 +57,11 @@ function InnerTransactionStack() {
 				name="EditTransactionScreen"
 				component={EditTransactionScreen}
 				options={{ title: "Edit Transaction Menu" }}
+			/>
+			<Stack.Screen
+				name="ShowMoreTransactionScreen"
+				component={ShowMoreTransactionScreen}
+				options={{ title: "Transactions List" }}
 			/>
 		</Stack.Navigator>
 	);

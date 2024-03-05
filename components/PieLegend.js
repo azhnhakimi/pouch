@@ -4,6 +4,10 @@ import { getLegendColor } from "../utils/Color";
 const markerDimension = 15;
 
 const PieLegend = ({ tag, value }) => {
+	if (tag === "personalCare") {
+		tag = "personal care";
+	}
+
 	return (
 		<View style={[styles.container]}>
 			<View

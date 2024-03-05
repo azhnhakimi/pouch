@@ -63,9 +63,11 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 10,
 		// backgroundColor: "red",
+		flex: 1,
 	},
 	bottomHalf: {
 		// backgroundColor: "yellow",
+		flex: 1,
 	},
 });
 

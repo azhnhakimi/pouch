@@ -197,14 +197,17 @@ const NewTransactionScreen = () => {
 		get(child(dbRef, `transactions/${monthYear}/tagTotals`))
 			.then((snapshot) => {
 				const tagTotalsData = snapshot.val();
-				let currentTagAmount = parseInt(
-					tagTotalsData[tag.toLowerCase()]
-				);
+				let tagKey = tag.toLowerCase();
+				if (tagKey === "personal care") {
+					tagKey = "personalCare";
+				}
+				let currentTagAmount = parseInt(tagTotalsData[tagKey]);
 				currentTagAmount = currentTagAmount + parseInt(amount);
 
 				const tempoRef = getDatabase();
+
 				update(ref(tempoRef, `transactions/${monthYear}/tagTotals`), {
-					[tag.toLowerCase()]: currentTagAmount,
+					[tagKey]: currentTagAmount,
 				})
 					.then(() => {
 						showMessage({
@@ -214,7 +217,10 @@ const NewTransactionScreen = () => {
 							backgroundColor: "#198754",
 						});
 					})
-					.catch((error) => console.log(error));
+					.catch((error) => {
+						console.log(error);
+						console.log("flag1");
+					});
 			})
 			.catch((error) => console.log(error));
 

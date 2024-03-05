@@ -15,6 +15,7 @@ import TransactionPanel from "../components/TransactionPanel";
 import AddNewPanel from "../components/AddNewPanel";
 import CustomPieChart from "../components/CustomPieChart";
 import KebabMenu from "../components/KebabMenu";
+import ShowMorePrompt from "../components/ShowMorePrompt";
 
 const SpendingsScreen = () => {
 	const navigation = useNavigation();
@@ -61,6 +62,12 @@ const SpendingsScreen = () => {
 		navigation.navigate("NewTransactionScreen", { monthYear });
 	};
 
+	const handleShowMorePrompt = () => {
+		navigation.navigate("ShowMoreTransactionScreen", {
+			monthYear,
+		});
+	};
+
 	const handleKebabMenuPress = () => {
 		alertProRef.current.open();
 	};
@@ -90,7 +97,11 @@ const SpendingsScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			<HeaderText text={"Transactions"} />
+			<View style={styles.header}>
+				<HeaderText text={"Transactions"} />
+				<ShowMorePrompt handleOnPress={handleShowMorePrompt} />
+			</View>
+
 			<View style={styles.panelContainer}>
 				{inMonthTransactions.length !== 0 &&
 					sortInMonthTransactions(inMonthTransactions)
@@ -103,6 +114,7 @@ const SpendingsScreen = () => {
 								tag={data.tag}
 								comments={data.comments}
 								fullDate={data.date}
+								keyProp={index}
 							/>
 						))}
 				<AddNewPanel
@@ -141,6 +153,12 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 20,
 		width: "100%",
+	},
+	header: {
+		flexDirection: "row",
+		width: "100%",
+		justifyContent: "space-between",
+		alignItems: "flex-end",
 	},
 });
 
