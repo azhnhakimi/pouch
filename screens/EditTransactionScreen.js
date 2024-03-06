@@ -18,6 +18,7 @@ import {
 	isValidNumericValue,
 } from "../utils/DataFormat";
 import { firebaseDatabase } from "../firebaseConfig";
+import { setUpStatusBar, resetStatusBar } from "../utils/Setup";
 
 import HeaderText from "../components/HeaderText";
 import CustomDatePicker from "../components/CustomDatePicker";
@@ -136,6 +137,7 @@ const EditTransactionScreen = () => {
 	};
 
 	const handleKebabMenuPress = () => {
+		setUpStatusBar();
 		alertProRef.current.open();
 	};
 
@@ -403,6 +405,7 @@ const EditTransactionScreen = () => {
 				<AlertPro
 					ref={alertProRef}
 					onConfirm={() => handleConfirmDeleteTransaction()}
+					onClose={() => resetStatusBar()}
 					onCancel={() => alertProRef.current.close()}
 					title="Delete Confirmation"
 					message={`Are you sure to delete this transaction? `}

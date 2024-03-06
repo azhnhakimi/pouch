@@ -8,3 +8,12 @@ export const setUpStatusBar = () => {
 		StatusBar.setBarStyle("dark-content");
 	}
 };
+
+export const resetStatusBar = () => {
+	if (Platform.OS === "android") {
+		StatusBar.setBackgroundColor("transparent");
+		StatusBar.setBarStyle("dark-content");
+	} else {
+		StatusBar.setBarStyle("light-content");
+	}
+};

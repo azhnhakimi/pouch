@@ -8,6 +8,7 @@ import AlertPro from "react-native-alert-pro";
 import { firebaseDatabase } from "../firebaseConfig";
 import { getDate } from "../utils/TextFormat";
 import { sortInMonthTransactions } from "../utils/DataFormat";
+import { setUpStatusBar, resetStatusBar } from "../utils/Setup";
 
 import WhiteScreen from "./WhiteScreen";
 import HeaderText from "../components/HeaderText";
@@ -70,6 +71,7 @@ const SpendingsScreen = () => {
 	};
 
 	const handleKebabMenuPress = () => {
+		setUpStatusBar();
 		alertProRef.current.open();
 	};
 
@@ -133,6 +135,7 @@ const SpendingsScreen = () => {
 			<AlertPro
 				ref={alertProRef}
 				onConfirm={() => handleConfirmDeleteCalendar()}
+				onClose={() => resetStatusBar()}
 				onCancel={() => alertProRef.current.close()}
 				title="Delete Confirmation"
 				message={`Are you sure to delete this calendar? All data for this month will be lost forever!`}
