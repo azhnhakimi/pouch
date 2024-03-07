@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ref, onValue } from "firebase/database";
-import { firebaseDatabase } from "../firebaseConfig";
+import LottieView from "lottie-react-native";
 
+import { firebaseDatabase } from "../firebaseConfig";
 import { sortArrayToMonthYear } from "../utils/DataFormat";
 
 import HeaderText from "../components/HeaderText";
@@ -15,7 +16,7 @@ import NoCalendarPanel from "../components/NoCalendarPanel";
 
 const CalendarScreen = () => {
 	const { navigate } = useNavigation();
-	const [data, setData] = useState([]);
+	const [data, setData] = useState(null);
 
 	useEffect(() => {
 		const transactionRef = ref(firebaseDatabase, "transactions");
@@ -42,6 +43,28 @@ const CalendarScreen = () => {
 
 	function showMoreCalendar() {
 		navigate("ShowMoreCalendarScreen");
+	}
+
+	if (!data) {
+		return (
+			<View
+				style={{
+					flex: 1,
+					backgroundColor: "#ffffff",
+					justifyContent: "center",
+					alignItems: "center",
+					width: "100%",
+					height: "100%",
+				}}
+			>
+				<LottieView
+					source={require("../assets/circularLoader.json")}
+					autoPlay={true}
+					loop={true}
+					style={{ width: 150, height: 150 }}
+				/>
+			</View>
+		);
 	}
 
 	return (

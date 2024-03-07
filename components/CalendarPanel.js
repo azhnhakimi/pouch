@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
+
 import { getShortMonthName } from "../utils/TextFormat";
 
 import CalendarIcon from "./CalendarIcon";
@@ -17,6 +19,27 @@ const CalendarPanel = ({ monthYear, totalAmount }) => {
 		setYearStr(monthYear.substring(monthYear.length - 4));
 		setMonthStr(monthYear.substring(0, monthYear.length - 4));
 	}, []);
+
+	if (monthStr === "" || yearStr === "") {
+		return (
+			<View
+				style={{
+					height: 70,
+					width: "100%",
+					borderBottomColor: "#E8E8E8",
+					borderBottomWidth: 1,
+					paddingBottom: 5,
+				}}
+			>
+				<LottieView
+					source={require("../assets/loadingSkeloton.json")}
+					autoPlay={true}
+					loop={true}
+					style={{ width: 200, height: 70 }}
+				/>
+			</View>
+		);
+	}
 
 	return (
 		<TouchableOpacity
