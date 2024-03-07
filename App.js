@@ -1,75 +1,144 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import {
-	StyleSheet,
-	View,
-	SafeAreaView,
-	Platform,
-	StatusBar,
-} from "react-native";
-import FlashMessage from "react-native-flash-message";
+import { StyleSheet, View, Animated, Text } from "react-native";
+import Constants from "expo-constants";
+import { Asset } from "expo-asset";
 import * as SplashScreen from "expo-splash-screen";
-import { MenuProvider } from "react-native-popup-menu";
+import * as Font from "expo-font";
 
-import { loadCustomFonts } from "./utils/FontLoader";
 import { resetStatusBar, setUpStatusBar } from "./utils/Setup";
+import { loadCustomFonts } from "./utils/FontLoader";
 
-import Navigation from "./Navigation";
+import MainScreen from "./MainScreen";
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch((e) => {
+	console.log(e);
+});
 
 export default function App() {
-	const [loaded] = loadCustomFonts();
+	const [isFontLoaded, setFontLoaded] = useState(false);
 
-	const hideSplashScreen = useCallback(async () => {
-		if (loaded) {
-			resetStatusBar();
-			await SplashScreen.hideAsync();
-		} else {
-			setUpStatusBar();
+	useEffect(() => {
+		async function loadFonts() {
+			try {
+				await Font.loadAsync({
+					Amaranth: require("./assets/fonts/Amaranth.ttf"),
+					Amiko: require("./assets/fonts/Amiko.ttf"),
+					AnekBangla: require("./assets/fonts/AnekBangla.ttf"),
+					LondrinaSolid: require("./assets/fonts/LondrinaSolid.ttf"),
+					Roboto: require("./assets/fonts/Roboto.ttf"),
+				});
+				setFontLoaded(true);
+			} catch (error) {
+				console.error("Error loading fonts:", error);
+			}
 		}
-	}, [loaded]);
 
-	return loaded ? (
-		<MenuProvider>
-			<SafeAreaView style={styles.safeContainer}>
-				<View style={styles.container} onLayout={hideSplashScreen}>
-					<Navigation />
-				</View>
-				<FlashMessage
-					position="top"
-					duration={1850}
-					statusBarHeight={
-						Platform.OS === "android" ? StatusBar.currentHeight : 0
-					}
-					// floating={true}
-					titleStyle={styles.titleStyle}
-					textStyle={styles.textStyle}
-				/>
-			</SafeAreaView>
-		</MenuProvider>
-	) : null;
+		loadFonts();
+	}, []);
+
+	if (!isFontLoaded) {
+		// Return a loading indicator or null if the fonts are not loaded yet
+		return (
+			<View style={{ backgroundColor: "red", flex: 1 }}>
+				<Text style={{ color: "#ffffff" }}>hello</Text>
+			</View>
+		);
+	}
+
+	return (
+		<AnimatedAppLoader image={{ uri: Constants.expoConfig.splash.image }}>
+			<MainScreen />
+		</AnimatedAppLoader>
+	);
 }
 
-const styles = StyleSheet.create({
-	safeContainer: {
-		flex: 1,
-		backgroundColor: "#ffffff",
-		paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-	},
-	container: {
-		flex: 1,
-		backgroundColor: "#ffffff",
-		paddingHorizontal: 10,
-	},
-	titleStyle: {
-		color: "#ffffff",
-		fontFamily: "Roboto",
-		fontWeight: "bold",
-		fontSize: 18,
-	},
-	textStyle: {
-		color: "#ffffff",
-		fontFamily: "Roboto",
-		fontSize: 15,
-	},
-});
+function AnimatedAppLoader({ children, image }) {
+	const [isSplashReady, setSplashReady] = useState(false);
+
+	useEffect(() => {
+		async function prepare() {
+			try {
+				await Asset.fromModule(
+					require("./assets/customSplash.png")
+				).downloadAsync();
+				// await Asset.fromURI(image.uri).downloadAsync();
+				setSplashReady(true);
+			} catch (error) {
+				console.error("Error downloading image:", error);
+			}
+		}
+
+		prepare();
+	}, [image]);
+
+	if (!isSplashReady) {
+		return null;
+	}
+
+	return (
+		<AnimatedSplashScreen image={image}>{children}</AnimatedSplashScreen>
+	);
+}
+
+function AnimatedSplashScreen({ children, image }) {
+	const animation = useMemo(() => new Animated.Value(1), []);
+	const [isAppReady, setAppReady] = useState(false);
+	const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
+
+	useEffect(() => {
+		if (isAppReady) {
+			resetStatusBar();
+			Animated.timing(animation, {
+				toValue: 0,
+				duration: 500,
+				useNativeDriver: true,
+			}).start(() => {
+				setAnimationComplete(true);
+			});
+		}
+	}, [isAppReady]);
+
+	const onImageLoaded = useCallback(async () => {
+		try {
+			await SplashScreen.hideAsync();
+			await Promise.all([]);
+		} catch (e) {
+			// handle errors
+		} finally {
+			setAppReady(true);
+		}
+	}, []);
+
+	return (
+		<View style={{ flex: 1 }}>
+			{isAppReady && children}
+			{!isSplashAnimationComplete && (
+				<Animated.View
+					pointerEvents="none"
+					style={[
+						StyleSheet.absoluteFill,
+						{
+							backgroundColor:
+								Constants.expoConfig.splash.backgroundColor,
+							opacity: animation,
+						},
+					]}
+				>
+					<Animated.Image
+						style={{
+							width: "100%",
+							height: "100%",
+							resizeMode:
+								Constants.expoConfig.splash.resizeMode ||
+								"contain",
+							opacity: animation,
+						}}
+						source={require("./assets/customSplash.png")}
+						onLoadEnd={onImageLoaded}
+						fadeDuration={0}
+					/>
+				</Animated.View>
+			)}
+		</View>
+	);
+}
