@@ -1,7 +1,7 @@
 {
 	"expo": {
-		"name": "pouch",
-		"slug": "pouch",
+		"name": "Pouch",
+		"slug": "Pouch",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/customIcon.png",
