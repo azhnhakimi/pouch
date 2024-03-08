@@ -103,7 +103,7 @@ function AnimatedSplashScreen({ children, image }) {
 			await SplashScreen.hideAsync();
 			await Promise.all([]);
 		} catch (e) {
-			// handle errors
+			throw new Error(e);
 		} finally {
 			setAppReady(true);
 		}

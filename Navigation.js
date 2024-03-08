@@ -83,18 +83,6 @@ function DebtStackGroup() {
 	);
 }
 
-const config = {
-	animation: "spring",
-	config: {
-		stiffness: 10000,
-		damping: 500,
-		mass: 3,
-		overshootClamping: true,
-		restDisplacementThreshold: 0.01,
-		restSpeedThreshold: 0.01,
-	},
-};
-
 function TransactionStackGroup() {
 	return (
 		<Stack.Navigator
