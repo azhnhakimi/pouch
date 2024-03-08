@@ -105,11 +105,9 @@ const EditTransactionScreen = () => {
 	const onChange = (event, selectedDate) => {
 		const currentDate = selectedDate;
 
-		const day = currentDate.getUTCDate().toString().padStart(2, "0");
-		const month = (currentDate.getUTCMonth() + 1)
-			.toString()
-			.padStart(2, "0");
-		const year = currentDate.getUTCFullYear();
+		const day = currentDate.getDate().toString().padStart(2, "0");
+		const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+		const year = currentDate.getFullYear();
 
 		const formattedDate = `${day}/${month}/${year}`;
 
@@ -199,6 +197,12 @@ const EditTransactionScreen = () => {
 					).catch((error) => console.log(error + "flag 2"));
 				});
 			}
+			showMessage({
+				message: "Success",
+				description: "Transaction has been deleted!",
+				type: "default",
+				backgroundColor: "#198754",
+			});
 		});
 
 		alertProRef.current.close();
@@ -404,7 +408,9 @@ const EditTransactionScreen = () => {
 				</View>
 				<AlertPro
 					ref={alertProRef}
-					onConfirm={() => handleConfirmDeleteTransaction()}
+					onConfirm={() => {
+						handleConfirmDeleteTransaction();
+					}}
 					onClose={() => resetStatusBar()}
 					onCancel={() => alertProRef.current.close()}
 					title="Delete Confirmation"
