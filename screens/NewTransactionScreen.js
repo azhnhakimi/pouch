@@ -139,7 +139,7 @@ const NewTransactionScreen = () => {
 					const inMonthTransactionsArr = snapshot.val();
 					const newTransaction = {
 						date: displayText,
-						amount: Number(amount).toFixed(2),
+						amount: parseFloat(amount).toFixed(2),
 						tag: tag,
 						comments: comments.trim(),
 					};
@@ -169,7 +169,7 @@ const NewTransactionScreen = () => {
 					const inMonthTransactionsArr = [];
 					const newTransaction = {
 						date: displayText,
-						amount: Number(amount).toFixed(2),
+						amount: parseFloat(amount).toFixed(2),
 						tag: tag,
 						comments: comments.trim(),
 					};
@@ -201,8 +201,8 @@ const NewTransactionScreen = () => {
 				if (tagKey === "personal care") {
 					tagKey = "personalCare";
 				}
-				let currentTagAmount = parseInt(tagTotalsData[tagKey]);
-				currentTagAmount = currentTagAmount + parseInt(amount);
+				let currentTagAmount = parseFloat(tagTotalsData[tagKey]);
+				currentTagAmount = currentTagAmount + parseFloat(amount);
 
 				const tempoRef = getDatabase();
 

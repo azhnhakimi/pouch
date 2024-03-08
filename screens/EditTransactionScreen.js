@@ -163,7 +163,7 @@ const EditTransactionScreen = () => {
 				let currentTotalAmount = 0;
 				data.forEach((transaction) => {
 					currentTotalAmount =
-						currentTotalAmount + parseInt(transaction.amount);
+						currentTotalAmount + parseFloat(transaction.amount);
 				});
 				set(
 					ref(
@@ -182,12 +182,12 @@ const EditTransactionScreen = () => {
 					if (tagKey === "personal care") {
 						tagKey = "personalCare";
 					}
-					const tagToBeUpdatedCurrentValue = parseInt(
+					const tagToBeUpdatedCurrentValue = parseFloat(
 						tagTotalsData[tagKey]
 					);
 					const newTagValue =
 						tagToBeUpdatedCurrentValue -
-						parseInt(transactionToBeRemoved.amount);
+						parseFloat(transactionToBeRemoved.amount);
 					const tempoRef = getDatabase();
 					update(
 						ref(tempoRef, `transactions/${monthYearStr}/tagTotals`),
@@ -252,7 +252,7 @@ const EditTransactionScreen = () => {
 
 				let currentTotalAmount = 0;
 				inMonthTransactionsArr.forEach((transaction) => {
-					const transactionAmount = parseInt(transaction.amount);
+					const transactionAmount = parseFloat(transaction.amount);
 					currentTotalAmount += transactionAmount;
 				});
 				set(
@@ -286,12 +286,14 @@ const EditTransactionScreen = () => {
 					}
 
 					if (oldTagKey === tagKey) {
-						const oldTransactionAmount = parseInt(passedInAmount);
-						let currentTagAmount = parseInt(tagTotalsData[tagKey]);
+						const oldTransactionAmount = parseFloat(passedInAmount);
+						let currentTagAmount = parseFloat(
+							tagTotalsData[tagKey]
+						);
 						currentTagAmount =
 							currentTagAmount -
 							oldTransactionAmount +
-							parseInt(amount);
+							parseFloat(amount);
 
 						const tempoRef = getDatabase();
 						update(
@@ -316,16 +318,18 @@ const EditTransactionScreen = () => {
 								console.log(error);
 							});
 					} else {
-						const oldTransactionAmount = parseInt(passedInAmount);
-						const oldTagOldAmount = parseInt(
+						const oldTransactionAmount = parseFloat(passedInAmount);
+						const oldTagOldAmount = parseFloat(
 							tagTotalsData[oldTagKey]
 						);
 						const oldTagCurrentAmount =
 							oldTagOldAmount - oldTransactionAmount;
 
-						const newTagOldAmount = parseInt(tagTotalsData[tagKey]);
+						const newTagOldAmount = parseFloat(
+							tagTotalsData[tagKey]
+						);
 						const newTagCurrentAmount =
-							newTagOldAmount + parseInt(amount);
+							newTagOldAmount + parseFloat(amount);
 
 						const tempoRef = getDatabase();
 						update(
