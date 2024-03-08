@@ -87,6 +87,7 @@ const NewTransactionScreen = () => {
 
 	const showDatepicker = () => {
 		showMode("date");
+		handleInputFieldBlur("blurAll");
 	};
 
 	const handleInputFieldFocus = (fieldName) => {

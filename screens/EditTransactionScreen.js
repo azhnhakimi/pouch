@@ -99,6 +99,7 @@ const EditTransactionScreen = () => {
 	};
 
 	const showDatepicker = () => {
+		handleInputFieldBlur("blurAll");
 		showMode("date");
 	};
 
