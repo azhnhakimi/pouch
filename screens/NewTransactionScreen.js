@@ -192,7 +192,12 @@ const NewTransactionScreen = () => {
 				}
 			})
 			.catch((error) => {
-				console.error(error);
+				showMessage({
+					message: "Error",
+					description: error,
+					type: "default",
+					backgroundColor: "#DC2127",
+				});
 			});
 
 		get(child(dbRef, `transactions/${monthYear}/tagTotals`))
@@ -219,11 +224,22 @@ const NewTransactionScreen = () => {
 						});
 					})
 					.catch((error) => {
-						console.log(error);
-						console.log("flag1");
+						showMessage({
+							message: "Error",
+							description: error,
+							type: "default",
+							backgroundColor: "#DC2127",
+						});
 					});
 			})
-			.catch((error) => console.log(error));
+			.catch((error) => {
+				showMessage({
+					message: "Error",
+					description: error,
+					type: "default",
+					backgroundColor: "#DC2127",
+				});
+			});
 
 		navigation.goBack();
 	};
