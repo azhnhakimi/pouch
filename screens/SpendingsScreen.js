@@ -1,7 +1,15 @@
 import { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { ref, onValue, set } from "firebase/database";
+import {
+	ref,
+	onValue,
+	set,
+	orderByChild,
+	query,
+	limitToFirst,
+	limitToLast,
+} from "firebase/database";
 import { showMessage } from "react-native-flash-message";
 import AlertPro from "react-native-alert-pro";
 
@@ -44,16 +52,19 @@ const SpendingsScreen = () => {
 			),
 		});
 
-		const transactionRef = ref(
+		const transactionsRef = ref(
 			firebaseDatabase,
 			`transactions/${monthYear}/inMonthTransactions`
 		);
+		const orderedQuery = query(transactionsRef, orderByChild("timestamp"));
+		const limitedOrderedQuery = query(orderedQuery, limitToLast(3));
 
-		onValue(transactionRef, (snapshot) => {
+		onValue(limitedOrderedQuery, (snapshot) => {
 			if (snapshot.exists() && snapshot.val() !== 0) {
-				setinMonthTransactions(
-					sortInMonthTransactions(snapshot.val()).slice(0, 3)
-				);
+				// setinMonthTransactions(
+				// 	sortInMonthTransactions(snapshot.val()).slice(0, 3)
+				// );
+				setinMonthTransactions(snapshot.val());
 			} else {
 				setinMonthTransactions([]);
 			}

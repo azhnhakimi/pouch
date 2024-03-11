@@ -16,6 +16,7 @@ import {
 	getMonthName,
 	sortInMonthTransactions,
 	isValidNumericValue,
+	getTimeStamp,
 } from "../utils/DataFormat";
 import { firebaseDatabase } from "../firebaseConfig";
 import { setUpStatusBar, resetStatusBar } from "../utils/Setup";
@@ -206,6 +207,7 @@ const EditTransactionScreen = () => {
 		inMonthTransactions.splice(transactionIndex, 1);
 		const updatedTransactionObject = {
 			date: displayText,
+			timestamp: getTimeStamp(displayText),
 			amount: parseFloat(parseFloat(amount).toFixed(2)),
 			tag: tag,
 			comments: comments.trim(),

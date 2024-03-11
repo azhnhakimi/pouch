@@ -10,7 +10,11 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { showMessage } from "react-native-flash-message";
 import { getDatabase, ref, child, get, set } from "firebase/database";
 
-import { getMonthIndex, isValidNumericValue } from "../utils/DataFormat";
+import {
+	getMonthIndex,
+	isValidNumericValue,
+	getTimeStamp,
+} from "../utils/DataFormat";
 import { firebaseDatabase } from "../firebaseConfig";
 
 import HeaderText from "../components/HeaderText";
@@ -132,6 +136,7 @@ const NewTransactionScreen = () => {
 					const inMonthTransactionsArr = snapshot.val();
 					const newTransaction = {
 						date: displayText,
+						timestamp: getTimeStamp(displayText),
 						amount: parseFloat(parseFloat(amount).toFixed(2)),
 						tag: tag,
 						comments: comments.trim(),
@@ -148,6 +153,7 @@ const NewTransactionScreen = () => {
 					const inMonthTransactionsArr = [];
 					const newTransaction = {
 						date: displayText,
+						timestamp: getTimeStamp(displayText),
 						amount: parseFloat(parseFloat(amount).toFixed(2)),
 						tag: tag,
 						comments: comments.trim(),
