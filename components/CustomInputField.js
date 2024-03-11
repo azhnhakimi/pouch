@@ -9,6 +9,7 @@ const CustomInputField = ({
 	handleBlur,
 	onChangeText,
 	text,
+	numeric,
 }) => {
 	return (
 		<View
@@ -19,6 +20,7 @@ const CustomInputField = ({
 			]}
 		>
 			<TextInput
+				inputMode={numeric ? "numeric" : "text"}
 				multiline
 				onFocus={handleFocus}
 				onBlur={handleBlur}

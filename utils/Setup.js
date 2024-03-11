@@ -2,18 +2,18 @@ import { StatusBar, Platform } from "react-native";
 
 export const setUpStatusBar = () => {
 	if (Platform.OS === "android") {
-		StatusBar.setBackgroundColor("#000000");
-		StatusBar.setBarStyle("light-content");
+		StatusBar.setBackgroundColor("#000000", true);
+		StatusBar.setBarStyle("light-content", true);
 	} else {
-		StatusBar.setBarStyle("dark-content");
+		StatusBar.setBarStyle("dark-content", true);
 	}
 };
 
 export const resetStatusBar = () => {
 	if (Platform.OS === "android") {
-		StatusBar.setBackgroundColor("transparent");
-		StatusBar.setBarStyle("dark-content");
+		StatusBar.setBackgroundColor("#ffffff", true);
+		StatusBar.setBarStyle("dark-content", true);
 	} else {
-		StatusBar.setBarStyle("light-content");
+		StatusBar.setBarStyle("light-content", true);
 	}
 };

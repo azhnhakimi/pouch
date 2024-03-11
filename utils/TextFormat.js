@@ -14,7 +14,6 @@ export const getShortMonthName = (monthName) => {
 		December: "Dec",
 	};
 
-	// Convert input to proper case (e.g., 'february' to 'February')
 	monthName = monthName
 		.toLowerCase()
 		.replace(/\b\w/g, (c) => c.toUpperCase());

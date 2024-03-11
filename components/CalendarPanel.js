@@ -85,11 +85,9 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-start",
 		alignItems: "center",
 		gap: 10,
-		// backgroundColor: "red",
 		flex: 1,
 	},
 	bottomHalf: {
-		// backgroundColor: "yellow",
 		flex: 1,
 	},
 });

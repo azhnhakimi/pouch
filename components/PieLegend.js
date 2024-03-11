@@ -28,7 +28,6 @@ const PieLegend = ({ tag, value }) => {
 
 const styles = StyleSheet.create({
 	container: {
-		// backgroundColor: "orange",
 		flexDirection: "row",
 		alignItems: "center",
 		gap: 10,

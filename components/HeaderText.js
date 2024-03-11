@@ -10,7 +10,6 @@ const HeaderText = ({ text }) => {
 
 const styles = StyleSheet.create({
 	container: {
-		// width: "100%",
 		alignSelf: "flex-start",
 	},
 	text: {

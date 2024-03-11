@@ -5,7 +5,7 @@ import { ref, onValue } from "firebase/database";
 import LottieView from "lottie-react-native";
 
 import { firebaseDatabase } from "../firebaseConfig";
-import { sortArrayToMonthYear } from "../utils/DataFormat";
+import { sortArrayToMonthYear, getTotalAmount } from "../utils/DataFormat";
 
 import HeaderText from "../components/HeaderText";
 import CalendarPanel from "../components/CalendarPanel";
@@ -19,14 +19,18 @@ const CalendarScreen = () => {
 	const [data, setData] = useState(null);
 
 	useEffect(() => {
-		const transactionRef = ref(firebaseDatabase, "transactions");
-		onValue(transactionRef, (snapshot) => {
+		onValue(ref(firebaseDatabase, "transactions"), (snapshot) => {
 			if (snapshot.exists()) {
 				const monthlyTransactionArray = [];
 				snapshot.forEach((childSnapshot) => {
 					const monthlyTransaction = {
 						monthYear: childSnapshot.key,
-						totalAmount: childSnapshot.val().totalAmount,
+						totalAmount:
+							childSnapshot.val().inMonthTransactions === 0
+								? 0
+								: getTotalAmount(
+										childSnapshot.val().inMonthTransactions
+								  ),
 					};
 					monthlyTransactionArray.push(monthlyTransaction);
 				});
@@ -93,7 +97,7 @@ const CalendarScreen = () => {
 				/>
 			</View>
 			<HeaderText text={"history"} />
-			{data && <CustomBarChart data={data} />}
+			<CustomBarChart data={data} />
 		</View>
 	);
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { ref, onValue, getDatabase, set } from "firebase/database";
+import { ref, onValue, set } from "firebase/database";
 import { showMessage } from "react-native-flash-message";
 import AlertPro from "react-native-alert-pro";
 
@@ -10,7 +10,6 @@ import { getDate } from "../utils/TextFormat";
 import { sortInMonthTransactions } from "../utils/DataFormat";
 import { setUpStatusBar, resetStatusBar } from "../utils/Setup";
 
-import WhiteScreen from "./WhiteScreen";
 import HeaderText from "../components/HeaderText";
 import TransactionPanel from "../components/TransactionPanel";
 import AddNewPanel from "../components/AddNewPanel";
@@ -51,9 +50,10 @@ const SpendingsScreen = () => {
 		);
 
 		onValue(transactionRef, (snapshot) => {
-			if (snapshot.exists()) {
-				const retrievedData = snapshot.val();
-				setinMonthTransactions(retrievedData);
+			if (snapshot.exists() && snapshot.val() !== 0) {
+				setinMonthTransactions(
+					sortInMonthTransactions(snapshot.val()).slice(0, 3)
+				);
 			} else {
 				setinMonthTransactions([]);
 			}
@@ -107,19 +107,19 @@ const SpendingsScreen = () => {
 
 			<View style={styles.panelContainer}>
 				{inMonthTransactions.length !== 0 ? (
-					sortInMonthTransactions(inMonthTransactions)
-						.slice(0, 3)
-						.map((data, index) => (
+					sortInMonthTransactions(inMonthTransactions).map(
+						(data, index) => (
 							<TransactionPanel
 								key={index}
-								amount={data.amount}
+								amount={data.amount.toFixed(2)}
 								date={getDate(data.date)}
 								tag={data.tag}
 								comments={data.comments}
 								fullDate={data.date}
 								keyProp={index}
 							/>
-						))
+						)
+					)
 				) : (
 					<NoTransactionPanel />
 				)}
@@ -142,6 +142,7 @@ const SpendingsScreen = () => {
 				textCancel="Cancel"
 				textConfirm="Delete"
 				customStyles={alertProStyles}
+				useNativeDriver={true}
 			/>
 		</View>
 	);

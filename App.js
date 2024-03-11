@@ -5,8 +5,7 @@ import { Asset } from "expo-asset";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 
-import { resetStatusBar, setUpStatusBar } from "./utils/Setup";
-import { loadCustomFonts } from "./utils/FontLoader";
+import { resetStatusBar } from "./utils/Setup";
 
 import MainScreen from "./MainScreen";
 
@@ -37,7 +36,6 @@ export default function App() {
 	}, []);
 
 	if (!isFontLoaded) {
-		// Return a loading indicator or null if the fonts are not loaded yet
 		return (
 			<View style={{ backgroundColor: "red", flex: 1 }}>
 				<Text style={{ color: "#ffffff" }}>hello</Text>
@@ -61,7 +59,6 @@ function AnimatedAppLoader({ children, image }) {
 				await Asset.fromModule(
 					require("./assets/customSplash.png")
 				).downloadAsync();
-				// await Asset.fromURI(image.uri).downloadAsync();
 				setSplashReady(true);
 			} catch (error) {
 				console.error("Error downloading image:", error);
@@ -90,7 +87,7 @@ function AnimatedSplashScreen({ children, image }) {
 			resetStatusBar();
 			Animated.timing(animation, {
 				toValue: 0,
-				duration: 500,
+				duration: 850,
 				useNativeDriver: true,
 			}).start(() => {
 				setAnimationComplete(true);

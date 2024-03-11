@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 const CustomPicker = ({
@@ -14,7 +13,6 @@ const CustomPicker = ({
 	return (
 		<View style={[styles.container, isFocused && styles.focused]}>
 			<Picker
-				// mode="dropdown"
 				selectedValue={selectedValue}
 				onValueChange={(itemValue, itemIndex) =>
 					setSelectedValue(itemValue)
@@ -35,7 +33,6 @@ const CustomPicker = ({
 
 const styles = StyleSheet.create({
 	container: {
-		// backgroundColor: "pink",
 		width: "100%",
 		height: 55,
 		borderColor: "#C9C9C9",
@@ -45,7 +42,6 @@ const styles = StyleSheet.create({
 	picker: {
 		width: "100%",
 		height: "100%",
-		// backgroundColor: "blue",
 		color: "#C9C9C9",
 	},
 	text: {

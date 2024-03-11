@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { getDatabase, ref, child, get, set, update } from "firebase/database";
+import { ref, set, onValue } from "firebase/database";
 import { showMessage } from "react-native-flash-message";
 import AlertPro from "react-native-alert-pro";
 
@@ -39,6 +39,8 @@ const EditTransactionScreen = () => {
 	const passedInTag = route.params?.tag;
 	const passedInComments = route.params?.comments;
 	const transactionIndex = route.params?.keyProp;
+
+	const [inMonthTransactions, setinMonthTransactions] = useState([]);
 
 	const tagValues = {
 		Food: "Food",
@@ -75,6 +77,19 @@ const EditTransactionScreen = () => {
 					text={"Delete  transaction"}
 				/>
 			),
+		});
+		const monthYearStr = `${getMonthName(passedInMonth)}${passedInYear}`;
+		const transactionRef = ref(
+			firebaseDatabase,
+			`transactions/${monthYearStr}/inMonthTransactions`
+		);
+
+		onValue(transactionRef, (snapshot) => {
+			if (snapshot.exists() && snapshot.val() !== 0) {
+				setinMonthTransactions(sortInMonthTransactions(snapshot.val()));
+			} else {
+				setinMonthTransactions([]);
+			}
 		});
 	}, []);
 
@@ -141,81 +156,25 @@ const EditTransactionScreen = () => {
 	};
 
 	const handleConfirmDeleteTransaction = () => {
-		const dbRef = ref(getDatabase());
+		setinMonthTransactions(inMonthTransactions.splice(transactionIndex, 1));
 		const monthYearStr = `${getMonthName(passedInMonth)}${passedInYear}`;
-		get(child(dbRef, `transactions/${monthYearStr}/inMonthTransactions`))
-			.then((snapshot) => {
-				if (snapshot.exists()) {
-					const data = sortInMonthTransactions(snapshot.val());
-					const transactionToBeRemoved = data.splice(
-						transactionIndex,
-						1
-					)[0];
-					set(
-						ref(
-							firebaseDatabase,
-							`transactions/${monthYearStr}/inMonthTransactions`
-						),
-						data
-					);
+		const transactionRef = ref(
+			firebaseDatabase,
+			`transactions/${monthYearStr}/inMonthTransactions`
+		);
+		if (inMonthTransactions.length === 0) {
+			set(transactionRef, 0);
+		} else {
+			set(transactionRef, inMonthTransactions);
+		}
 
-					// update total amount
-					let currentTotalAmount = 0;
-					data.forEach((transaction) => {
-						currentTotalAmount =
-							currentTotalAmount + parseFloat(transaction.amount);
-					});
-					set(
-						ref(
-							firebaseDatabase,
-							`transactions/${monthYearStr}/totalAmount`
-						),
-						currentTotalAmount
-					);
-
-					// update total tags
-					get(
-						child(dbRef, `transactions/${monthYearStr}/tagTotals`)
-					).then((snapshot) => {
-						const tagTotalsData = snapshot.val();
-						let tagKey = transactionToBeRemoved.tag.toLowerCase();
-						if (tagKey === "personal care") {
-							tagKey = "personalCare";
-						}
-						const tagToBeUpdatedCurrentValue = parseFloat(
-							tagTotalsData[tagKey]
-						);
-						const newTagValue =
-							tagToBeUpdatedCurrentValue -
-							parseFloat(transactionToBeRemoved.amount);
-						const tempoRef = getDatabase();
-						update(
-							ref(
-								tempoRef,
-								`transactions/${monthYearStr}/tagTotals`
-							),
-							{
-								[tagKey]: newTagValue,
-							}
-						).catch((error) => console.log(error + "flag 2"));
-					});
-				}
-				showMessage({
-					message: "Success",
-					description: "Transaction has been deleted!",
-					type: "default",
-					backgroundColor: "#198754",
-				});
-				resetStatusBar();
-			})
-			.catch((error) => {
-				showMessage({
-					message: "Error",
-					description: error,
-					type: "default",
-					backgroundColor: "#DC2127",
-				});
-			});
+		showMessage({
+			message: "Success",
+			description: "Transaction has been deleted!",
+			type: "default",
+			backgroundColor: "#198754",
+		});
+		resetStatusBar();
 
 		alertProRef.current.close();
 		navigation.goBack();
@@ -244,167 +203,30 @@ const EditTransactionScreen = () => {
 			return;
 		}
 
-		const dbRef = ref(getDatabase());
+		inMonthTransactions.splice(transactionIndex, 1);
+		const updatedTransactionObject = {
+			date: displayText,
+			amount: parseFloat(parseFloat(amount).toFixed(2)),
+			tag: tag,
+			comments: comments.trim(),
+		};
+		inMonthTransactions.push(updatedTransactionObject);
+
 		const monthYearStr = `${getMonthName(passedInMonth)}${passedInYear}`;
-		get(child(dbRef, `transactions/${monthYearStr}/inMonthTransactions`))
-			.then((snapshot) => {
-				if (snapshot.exists()) {
-					const inMonthTransactionsArr = sortInMonthTransactions(
-						snapshot.val()
-					);
-					inMonthTransactionsArr.splice(transactionIndex, 1);
-					const updatedTransactionObject = {
-						date: displayText,
-						amount: Number(amount).toFixed(2),
-						tag: tag,
-						comments: comments.trim(),
-					};
-					inMonthTransactionsArr.push(updatedTransactionObject);
+		const transactionRef = ref(
+			firebaseDatabase,
+			`transactions/${monthYearStr}/inMonthTransactions`
+		);
+		set(transactionRef, inMonthTransactions);
 
-					let currentTotalAmount = 0;
-					inMonthTransactionsArr.forEach((transaction) => {
-						const transactionAmount = parseFloat(
-							transaction.amount
-						);
-						currentTotalAmount += transactionAmount;
-					});
-					set(
-						ref(
-							firebaseDatabase,
-							`transactions/${monthYearStr}/inMonthTransactions`
-						),
-						inMonthTransactionsArr
-					);
-					set(
-						ref(
-							firebaseDatabase,
-							`transactions/${monthYearStr}/totalAmount`
-						),
-						currentTotalAmount
-					);
+		showMessage({
+			message: "Success",
+			description: "Transaction has been updated!",
+			type: "default",
+			backgroundColor: "#198754",
+		});
+		resetStatusBar();
 
-					get(child(dbRef, `transactions/${monthYearStr}/tagTotals`))
-						.then((snapshot) => {
-							const tagTotalsData = snapshot.val();
-
-							let oldTagKey = passedInTag.toLowerCase();
-							if (oldTagKey === "personal care") {
-								oldTagKey = "personalCare";
-							}
-
-							let tagKey = tag.toLowerCase();
-							if (tagKey === "personal care") {
-								tagKey = "personalCare";
-							}
-
-							if (oldTagKey === tagKey) {
-								const oldTransactionAmount =
-									parseFloat(passedInAmount);
-								let currentTagAmount = parseFloat(
-									tagTotalsData[tagKey]
-								);
-								currentTagAmount =
-									currentTagAmount -
-									oldTransactionAmount +
-									parseFloat(amount);
-
-								const tempoRef = getDatabase();
-								update(
-									ref(
-										tempoRef,
-										`transactions/${monthYearStr}/tagTotals`
-									),
-									{
-										[tagKey]: currentTagAmount,
-									}
-								)
-									.then(() => {
-										showMessage({
-											message: "Success",
-											description:
-												"Transaction has been updated!",
-											type: "default",
-											backgroundColor: "#198754",
-										});
-									})
-									.catch((error) => {
-										showMessage({
-											message: "Error",
-											description: error,
-											type: "default",
-											backgroundColor: "#DC2127",
-										});
-									});
-							} else {
-								const oldTransactionAmount =
-									parseFloat(passedInAmount);
-								const oldTagOldAmount = parseFloat(
-									tagTotalsData[oldTagKey]
-								);
-								const oldTagCurrentAmount =
-									oldTagOldAmount - oldTransactionAmount;
-
-								const newTagOldAmount = parseFloat(
-									tagTotalsData[tagKey]
-								);
-								const newTagCurrentAmount =
-									newTagOldAmount + parseFloat(amount);
-
-								const tempoRef = getDatabase();
-								update(
-									ref(
-										tempoRef,
-										`transactions/${monthYearStr}/tagTotals`
-									),
-									{
-										[oldTagKey]: oldTagCurrentAmount,
-									}
-								).catch((error) => {
-									showMessage({
-										message: "Error",
-										description: error,
-										type: "default",
-										backgroundColor: "#DC2127",
-									});
-								});
-								update(
-									ref(
-										tempoRef,
-										`transactions/${monthYearStr}/tagTotals`
-									),
-									{
-										[tagKey]: newTagCurrentAmount,
-									}
-								).catch((error) => {
-									console.log(error);
-								});
-								showMessage({
-									message: "Success",
-									description:
-										"Transaction has been updated!",
-									type: "default",
-									backgroundColor: "#198754",
-								});
-							}
-						})
-						.catch((error) => {
-							showMessage({
-								message: "Error",
-								description: error,
-								type: "default",
-								backgroundColor: "#DC2127",
-							});
-						});
-				}
-			})
-			.catch((error) => {
-				showMessage({
-					message: "Error",
-					description: error,
-					type: "default",
-					backgroundColor: "#DC2127",
-				});
-			});
 		navigation.goBack();
 	};
 
@@ -428,6 +250,7 @@ const EditTransactionScreen = () => {
 						handleBlur={() => handleInputFieldBlur("amount")}
 						onChangeText={setAmount}
 						text={amount}
+						numeric={true}
 					/>
 					<CustomPicker
 						values={tagValues}
@@ -463,6 +286,7 @@ const EditTransactionScreen = () => {
 					textCancel="Cancel"
 					textConfirm="Delete"
 					customStyles={alertProStyles}
+					useNativeDriver={true}
 				/>
 			</View>
 		</TouchableWithoutFeedback>

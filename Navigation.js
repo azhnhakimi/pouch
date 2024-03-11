@@ -1,4 +1,4 @@
-import { Dimensions, Text } from "react-native";
+import { Dimensions } from "react-native";
 import {
 	NavigationContainer,
 	getFocusedRouteNameFromRoute,
@@ -7,15 +7,16 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import CalendarScreen from "./screens/CalendarScreen";
-import CollectorScreen from "./screens/CollectorScreen";
 import NewCalendarScreen from "./screens/NewCalendarScreen";
 import SpendingsScreen from "./screens/SpendingsScreen";
 import TopBarComp from "./components/TopBarComp";
-import NewCollectorScreen from "./screens/NewCollectorScreen";
 import NewTransactionScreen from "./screens/NewTransactionScreen";
 import ShowMoreCalendarScreen from "./screens/ShowMoreCalendarScreen";
 import EditTransactionScreen from "./screens/EditTransactionScreen";
 import ShowMoreTransactionScreen from "./screens/ShowMoreTransactionScreen";
+import DebtListScreen from "./screens/DebtListScreen";
+import NewDebtScreen from "./screens/NewDebtScreen";
+import EditDebtScreen from "./screens/EditDebtScreen";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -23,11 +24,12 @@ const Stack = createNativeStackNavigator();
 const getRouteName = (route) => {
 	const routeName = getFocusedRouteNameFromRoute(route);
 	const swipeDisabledRoutes = [
-		"NewCollectorScreen",
 		"NewCalendarScreen",
 		"InnerTransactionStack",
 		"ShowMoreCalendarScreen",
 		"EditTransactionScreen",
+		"NewDebtScreen",
+		"EditDebtScreen",
 	];
 
 	if (routeName && swipeDisabledRoutes.includes(routeName)) {
@@ -71,13 +73,33 @@ function DebtStackGroup() {
 	return (
 		<Stack.Navigator>
 			<Stack.Screen
-				name="CollectorScreen"
-				component={CollectorScreen}
+				name="DebtListScreen"
+				component={DebtListScreen}
 				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
-				name="NewCollectorScreen"
-				component={NewCollectorScreen}
+				name="NewDebtScreen"
+				component={NewDebtScreen}
+				options={{
+					title: "New Debt Menu",
+					headerTitleAlign: "center",
+					headerTitleStyle: {
+						fontFamily: "Amaranth",
+						fontSize: 20,
+					},
+				}}
+			/>
+			<Stack.Screen
+				name="EditDebtScreen"
+				component={EditDebtScreen}
+				options={{
+					title: "Edit Debt Menu",
+					headerTitleAlign: "center",
+					headerTitleStyle: {
+						fontFamily: "Amaranth",
+						fontSize: 20,
+					},
+				}}
 			/>
 		</Stack.Navigator>
 	);

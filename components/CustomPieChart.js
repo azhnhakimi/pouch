@@ -4,7 +4,11 @@ import { PieChart } from "react-native-gifted-charts";
 import { ref, onValue, getDatabase, set } from "firebase/database";
 
 import { getLegendColor } from "../utils/Color";
-import { getPieLegendPercentage } from "../utils/DataFormat";
+import {
+	getPieLegendPercentage,
+	getTotalAmount,
+	getTagTotals,
+} from "../utils/DataFormat";
 import { firebaseDatabase } from "../firebaseConfig";
 
 import PieInnerComp from "./PieInnerComp";
@@ -15,50 +19,22 @@ const CustomPieChart = ({ monthYear }) => {
 	const [pieChartData, setPieChartData] = useState([]);
 
 	useEffect(() => {
-		const totalAmountRef = ref(
+		const transactionRef = ref(
 			firebaseDatabase,
-			"transactions/" + monthYear + "/totalAmount"
+			`transactions/${monthYear}/inMonthTransactions`
 		);
-		const tagTotalsRef = ref(
-			firebaseDatabase,
-			"transactions/" + monthYear + "/tagTotals"
-		);
-
-		onValue(totalAmountRef, (snapshot) => {
-			if (snapshot.exists()) {
-				setTotalAmount(snapshot.val());
+		onValue(transactionRef, (snapshot) => {
+			if (snapshot.exists() && snapshot.val() !== 0) {
+				setTotalAmount(getTotalAmount(snapshot.val()));
+				setPieChartData(getTagTotals(snapshot.val()));
 			} else {
 				setTotalAmount(0);
-			}
-		});
-
-		onValue(tagTotalsRef, (snapshot) => {
-			if (snapshot.exists()) {
-				const pieChartDataArr = [];
-				snapshot.forEach((childSnapshot) => {
-					const tagObject = {
-						value: childSnapshot.val(),
-						color: getLegendColor(childSnapshot.key),
-						text: childSnapshot.key,
-					};
-					pieChartDataArr.push(tagObject);
-				});
-				setPieChartData(pieChartDataArr);
-			} else {
 				setPieChartData([]);
 			}
 		});
 	}, []);
 
-	if (pieChartData.length === 0) {
-		return (
-			<View style={styles.errorMessageContainer}>
-				<Text style={styles.errorMessageText}>
-					Data could not be fetched... &#9785;
-				</Text>
-			</View>
-		);
-	} else if (totalAmount === 0) {
+	if (totalAmount === 0) {
 		return (
 			<View style={styles.errorMessageContainer}>
 				<Text style={styles.errorMessageText}>
@@ -116,7 +92,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		gap: 5,
-		// backgroundColor: "pink",
 	},
 	pieChartContainer: {
 		height: "100%",

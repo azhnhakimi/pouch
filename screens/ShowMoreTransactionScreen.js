@@ -22,7 +22,7 @@ const ShowMoreTransactionScreen = () => {
 			`transactions/${monthYear}/inMonthTransactions`
 		);
 		onValue(transactionRef, (snapshot) => {
-			if (snapshot.exists()) {
+			if (snapshot.exists() && snapshot.val() !== 0) {
 				const retrievedData = snapshot.val();
 				setinMonthTransactions(sortInMonthTransactions(retrievedData));
 			} else {
@@ -38,7 +38,7 @@ const ShowMoreTransactionScreen = () => {
 					data={inMonthTransactions}
 					renderItem={({ item, index }) => (
 						<TransactionPanel
-							amount={item.amount}
+							amount={item.amount.toFixed(2)}
 							date={getDate(item.date)}
 							tag={item.tag}
 							comments={item.comments}

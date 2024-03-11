@@ -3,7 +3,7 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { ref, onValue } from "firebase/database";
 
 import { firebaseDatabase } from "../firebaseConfig";
-import { sortArrayToMonthYear } from "../utils/DataFormat";
+import { sortArrayToMonthYear, getTotalAmount } from "../utils/DataFormat";
 
 import CalendarPanel from "../components/CalendarPanel";
 import NoCalendarPanel from "../components/NoCalendarPanel";
@@ -19,7 +19,12 @@ const ShowMoreCalendarScreen = () => {
 				snapshot.forEach((childSnapshot) => {
 					const monthlyTransaction = {
 						monthYear: childSnapshot.key,
-						totalAmount: childSnapshot.val().totalAmount,
+						totalAmount:
+							childSnapshot.val().inMonthTransactions === 0
+								? 0
+								: getTotalAmount(
+										childSnapshot.val().inMonthTransactions
+								  ),
 					};
 					monthlyTransactionArray.push(monthlyTransaction);
 				});

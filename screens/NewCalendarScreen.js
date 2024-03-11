@@ -6,11 +6,10 @@ import {
 	Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { ref, set, child, get, getDatabase, push } from "firebase/database";
+import { ref, set, child, get, getDatabase } from "firebase/database";
 import { showMessage } from "react-native-flash-message";
 
 import { firebaseDatabase } from "../firebaseConfig";
-import Calendar from "../class/Calendar";
 import { checkDateExceedingCurrent, isValidYear } from "../utils/DataFormat";
 
 import CustomInputField from "../components/CustomInputField";
@@ -50,9 +49,6 @@ const NewCalendarScreen = () => {
 	}
 
 	function handleSaveBtnPress() {
-		const newCalendar = new Calendar();
-		const newCalendarData = newCalendar.getData();
-
 		if (year.trim() === "") {
 			showMessage({
 				message: "Error",
@@ -91,8 +87,13 @@ const NewCalendarScreen = () => {
 					});
 				} else {
 					set(
-						ref(firebaseDatabase, "transactions/" + newPathStr),
-						newCalendarData
+						ref(
+							firebaseDatabase,
+							"transactions/" +
+								newPathStr +
+								"/inMonthTransactions"
+						),
+						0
 					);
 
 					navigation.navigate("CalendarScreen");
@@ -131,36 +132,35 @@ const NewCalendarScreen = () => {
 	};
 
 	return (
-		<>
-			<TouchableWithoutFeedback onPress={inputFieldBlur}>
-				<View style={styles.container}>
-					<View style={styles.upperHalf}>
-						<HeaderText text={"Calendar Details"} />
-						<CustomInputField
-							headerText={"Year"}
-							height={50}
-							isFocused={inputFieldFocused}
-							handleFocus={inputFieldFocus}
-							handleBlur={inputFieldBlur}
-							onChangeText={setYear}
-							text={year}
-						/>
-						<CustomPicker
-							values={values}
-							handleFocus={pickerFocus}
-							handleBlur={pickerBlur}
-							isFocused={pickerFocused}
-							text={"Month"}
-							selectedValue={selectedMonth}
-							setSelectedValue={setSelectedMonth}
-						/>
-					</View>
-					<View>
-						<SaveBtn handleOnPress={handleSaveBtnPress} />
-					</View>
+		<TouchableWithoutFeedback onPress={inputFieldBlur}>
+			<View style={styles.container}>
+				<View style={styles.upperHalf}>
+					<HeaderText text={"Calendar Details"} />
+					<CustomInputField
+						headerText={"Year"}
+						height={50}
+						isFocused={inputFieldFocused}
+						handleFocus={inputFieldFocus}
+						handleBlur={inputFieldBlur}
+						onChangeText={setYear}
+						text={year}
+						numeric={true}
+					/>
+					<CustomPicker
+						values={values}
+						handleFocus={pickerFocus}
+						handleBlur={pickerBlur}
+						isFocused={pickerFocused}
+						text={"Month"}
+						selectedValue={selectedMonth}
+						setSelectedValue={setSelectedMonth}
+					/>
 				</View>
-			</TouchableWithoutFeedback>
-		</>
+				<View>
+					<SaveBtn handleOnPress={handleSaveBtnPress} />
+				</View>
+			</View>
+		</TouchableWithoutFeedback>
 	);
 };
 

@@ -1,3 +1,5 @@
+import { getLegendColor } from "./Color";
+
 export const getSortedData = (data) => {
 	const monthKeys = Object.keys(data).sort((a, b) => {
 		const aYear = a.slice(-4);
@@ -189,4 +191,55 @@ export const sortInMonthTransactions = (inMonthTransactions) => {
 		return dateB - dateA;
 	});
 	return sortedTransactions;
+};
+
+export const getTotalAmount = (inMonthTransactionsArr) => {
+	let totalAmount = 0;
+	inMonthTransactionsArr.forEach((transaction) => {
+		const amount = parseFloat(transaction.amount).toFixed(2);
+		totalAmount += parseFloat(amount);
+	});
+	return parseFloat(parseFloat(totalAmount).toFixed(2));
+};
+
+export const getTagTotals = (inMonthTransactionsArr) => {
+	const pieChartData = [
+		{ value: 0, color: getLegendColor("Food"), text: "Food" },
+		{ value: 0, color: getLegendColor("Clothing"), text: "Clothing" },
+		{ value: 0, color: getLegendColor("Utilities"), text: "Utilities" },
+		{ value: 0, color: getLegendColor("Transport"), text: "Transport" },
+		{
+			value: 0,
+			color: getLegendColor("Personal Care"),
+			text: "Personal Care",
+		},
+		{
+			value: 0,
+			color: getLegendColor("Entertainment"),
+			text: "Entertainment",
+		},
+		{ value: 0, color: getLegendColor("Savings"), text: "Savings" },
+		{
+			value: 0,
+			color: getLegendColor("Miscellaneous"),
+			text: "Miscellaneous",
+		},
+		{ value: 0, color: getLegendColor("Supplies"), text: "Supplies" },
+		{
+			value: 0,
+			color: getLegendColor("Subscriptions"),
+			text: "Subscriptions",
+		},
+	];
+	inMonthTransactionsArr.forEach((transaction) => {
+		const transactionAmount = transaction.amount;
+		const transactionTag = transaction.tag;
+		const pieChartEntry = pieChartData.find(
+			(entry) => entry.text === transactionTag
+		);
+		if (pieChartEntry) {
+			pieChartEntry.value += transactionAmount;
+		}
+	});
+	return pieChartData;
 };

@@ -8,15 +8,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { showMessage } from "react-native-flash-message";
-import {
-	getDatabase,
-	ref,
-	child,
-	get,
-	set,
-	onValue,
-	update,
-} from "firebase/database";
+import { getDatabase, ref, child, get, set } from "firebase/database";
 
 import { getMonthIndex, isValidNumericValue } from "../utils/DataFormat";
 import { firebaseDatabase } from "../firebaseConfig";
@@ -136,29 +128,15 @@ const NewTransactionScreen = () => {
 		const dbRef = ref(getDatabase());
 		get(child(dbRef, `transactions/${monthYear}/inMonthTransactions`))
 			.then((snapshot) => {
-				if (snapshot.exists()) {
+				if (snapshot.exists() && snapshot.val() !== 0) {
 					const inMonthTransactionsArr = snapshot.val();
 					const newTransaction = {
 						date: displayText,
-						amount: parseFloat(amount).toFixed(2),
+						amount: parseFloat(parseFloat(amount).toFixed(2)),
 						tag: tag,
 						comments: comments.trim(),
 					};
 					inMonthTransactionsArr.push(newTransaction);
-
-					let currentTotalAmount = 0;
-					inMonthTransactionsArr.forEach((transaction) => {
-						const transactionAmount = Number(transaction.amount);
-						currentTotalAmount =
-							currentTotalAmount + transactionAmount;
-					});
-					set(
-						ref(
-							firebaseDatabase,
-							`transactions/${monthYear}/totalAmount`
-						),
-						currentTotalAmount
-					);
 					set(
 						ref(
 							firebaseDatabase,
@@ -170,18 +148,11 @@ const NewTransactionScreen = () => {
 					const inMonthTransactionsArr = [];
 					const newTransaction = {
 						date: displayText,
-						amount: parseFloat(amount).toFixed(2),
+						amount: parseFloat(parseFloat(amount).toFixed(2)),
 						tag: tag,
 						comments: comments.trim(),
 					};
 					inMonthTransactionsArr.push(newTransaction);
-					set(
-						ref(
-							firebaseDatabase,
-							`transactions/${monthYear}/totalAmount`
-						),
-						newTransaction.amount
-					);
 					set(
 						ref(
 							firebaseDatabase,
@@ -199,48 +170,6 @@ const NewTransactionScreen = () => {
 					backgroundColor: "#DC2127",
 				});
 			});
-
-		get(child(dbRef, `transactions/${monthYear}/tagTotals`))
-			.then((snapshot) => {
-				const tagTotalsData = snapshot.val();
-				let tagKey = tag.toLowerCase();
-				if (tagKey === "personal care") {
-					tagKey = "personalCare";
-				}
-				let currentTagAmount = parseFloat(tagTotalsData[tagKey]);
-				currentTagAmount = currentTagAmount + parseFloat(amount);
-
-				const tempoRef = getDatabase();
-
-				update(ref(tempoRef, `transactions/${monthYear}/tagTotals`), {
-					[tagKey]: currentTagAmount,
-				})
-					.then(() => {
-						showMessage({
-							message: "Success",
-							description: "New transaction successfully added!",
-							type: "default",
-							backgroundColor: "#198754",
-						});
-					})
-					.catch((error) => {
-						showMessage({
-							message: "Error",
-							description: error,
-							type: "default",
-							backgroundColor: "#DC2127",
-						});
-					});
-			})
-			.catch((error) => {
-				showMessage({
-					message: "Error",
-					description: error,
-					type: "default",
-					backgroundColor: "#DC2127",
-				});
-			});
-
 		navigation.goBack();
 	};
 
@@ -264,6 +193,7 @@ const NewTransactionScreen = () => {
 						handleBlur={() => handleInputFieldBlur("amount")}
 						onChangeText={setAmount}
 						text={amount}
+						numeric={true}
 					/>
 					<CustomPicker
 						values={tagValues}
